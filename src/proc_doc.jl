@@ -8,6 +8,7 @@ function makedicts(doc::AbstractDocument, mincount::Int)
     return _makedicts(ngrams(doc), mincount)
 end
 
+# if a TextAnalysis Corpus is provided
 function makedicts(crps::Corpus, mincount::Int)
     return _makedicts(crps.lexicon, mincount)
 end

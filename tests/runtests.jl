@@ -6,9 +6,9 @@ using Word2Vec: makedicts, createbinarytree
 include("utils.jl")
 
 #setup for tests
-docpath = ".\\data\\shakespeare.txt"
+docpath = "..\\data\\shakespeare.txt"
 doc = gen_test_doc(docpath)
-crpspath = ".\\data\\shakespeare_all.txt"
+crpspath = "..\\data\\shakespeare_all.txt"
 crps = gen_test_corpus(crpspath)
 
 #test code

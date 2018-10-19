@@ -15,7 +15,7 @@ function createbinarytree(doc::AbstractDocument, mincount::Int)
     mg = _createbinarytree(pq, n2id, id2n)
     (mg, w2id, id2w)
 end
-#if a corpus is provided
+#if a TextAnalysis Corpus is provided
 function createbinarytree(crps::Corpus, mincount::Int)
     if length(crps.lexicon) == 0
         update_lexicon!(crps)
