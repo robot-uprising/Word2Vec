@@ -9,9 +9,7 @@ function makedicts(doc::AbstractDocument, mincount::Int)
 end
 
 function _makedicts(ngd::Dict, mincount::Int)
-    words_counts = _dropmin(ngd, mincount)
-    pq = PriorityQueue(words_counts)
-    lexicn = collect(keys(words_counts))
+    pq = PriorityQueue(_dropmin(ngd, mincount))
     w2id = Dict{String, Int}()
     id2w = Dict{Int, String}()
     for (i,j) in enumerate(pq)
@@ -19,7 +17,7 @@ function _makedicts(ngd::Dict, mincount::Int)
         w2id[k] = i
         id2w[i] = k
     end
-    pq, lexicn, w2id, id2w
+    (pq, w2id, id2w)
 end
 
 function _dropmin(ngd, mincount)
