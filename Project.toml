@@ -1,7 +1,7 @@
 statauthors = ["mgordon <msgordon@umich.edu>"]
 name = "Word2Vec"
 uuid = "f86a2c00-d367-11e8-2cd7-9be6d297710b"
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 DataStructures = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
