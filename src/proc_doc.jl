@@ -8,6 +8,10 @@ function makedicts(doc::AbstractDocument, mincount::Int)
     return _makedicts(ngrams(doc), mincount)
 end
 
+function makedicts(crps::Corpus, mincount::Int)
+    return _makedicts(crps.lexicon, mincount)
+end
+
 function _makedicts(ngd::Dict, mincount::Int)
     pq = PriorityQueue(_dropmin(ngd, mincount))
     w2id = Dict{String, Int}()

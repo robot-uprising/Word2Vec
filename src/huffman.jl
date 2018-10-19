@@ -1,22 +1,45 @@
 # if a file name is provided as String
 function createbinarytree(path::AbstractString, mincount::Int)
-    return _createbinarytree(makedicts(path, mincount)...)
+    pq, n2id, id2n = makedicts(path, mincount)
+    id2w = copy(id2n)
+    w2id = copy(n2id)
+    mg = _createbinarytree(pq, n2id, id2n)
+    (mg, w2id, id2w)
 end
 
 # if a TextAnalysis type document is provided
 function createbinarytree(doc::AbstractDocument, mincount::Int)
-    return _createbinarytree(makedicts(doc, mincount)...)
+    pq, n2id, id2n = makedicts(doc, mincount)
+    id2w = copy(id2n)
+    w2id = copy(n2id)
+    mg = _createbinarytree(pq, n2id, id2n)
+    (mg, w2id, id2w)
+end
+#if a corpus is provided
+function createbinarytree(crps::Corpus, mincount::Int)
+    if length(crps.lexicon) == 0
+        update_lexicon!(crps)
+    end
+    pq, n2id, id2n = makedicts(crps, mincount)
+    id2w = copy(id2n)
+    w2id = copy(n2id)
+    mg = _createbinarytree(pq, n2id, id2n)
+    (mg, w2id, id2w)
 end
 
 function _createbinarytree(pq::PriorityQueue, w2id::Dict{String, Int}, id2w::Dict{Int, String})
     mg = MetaGraph(SimpleGraph(length(pq)))
+
+    #create nodes
     while length(pq) > 1
          _newnode!(mg, pq, w2id, id2w)
     end
-    (mg, w2id, id2w)
+
+    mg
 end
 
 function _newnode!(mg::MetaGraph, pq::PriorityQueue, w2id::Dict{String, Int}, id2w::Dict{Int, String})
+
     #capture information about next two nodes
     (nodea, prioritya) = dequeue_pair!(pq)
     (nodeb, priorityb) = dequeue_pair!(pq)
@@ -27,7 +50,6 @@ function _newnode!(mg::MetaGraph, pq::PriorityQueue, w2id::Dict{String, Int}, id
     add_vertex!(mg)
     idxnode = nv(mg)
     prioritynode = prioritya + priorityb
-    prioritynode
     node = "node-$idxnode"
     w2id[node] = idxnode
     id2w[idxnode] = node
