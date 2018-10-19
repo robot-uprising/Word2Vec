@@ -1,9 +1,13 @@
 module Word2Vec
 
-export gendoc
-export createbinarytree
+using LightGraphs
+using MetaGraphs
+using DataStructures
+using TextAnalysis
 
 include("proc_doc.jl")
 include("huffman.jl")
+
+# export 
 
 end
