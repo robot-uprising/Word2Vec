@@ -13,9 +13,6 @@ function _createbinarytree(pq::PriorityQueue, w2id::Dict{String, Int}, id2w::Dic
     while length(pq) > 1
          _newnode!(mg, pq, w2id, id2w)
     end
-    idxroot = nv(mg)
-    w2id["root"] = idxroot
-    id2w[idxroot] = "root"
     (mg, w2id, id2w)
 end
 
