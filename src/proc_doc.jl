@@ -1,3 +1,5 @@
+using TextAnalysis
+
 # if a file name is provided as String
 function makedicts(path::AbstractString, mincount::Int)
     return _makedicts(ngrams(FileDocument(path)), mincount)
@@ -10,19 +12,20 @@ end
 
 # if a TextAnalysis Corpus is provided
 function makedicts(crps::Corpus, mincount::Int)
+    if length(crps.lexicon) == 0
+        update_lexicon!(crps)
+    end
     return _makedicts(crps.lexicon, mincount)
 end
 
 function _makedicts(ngd::Dict, mincount::Int)
     pq = PriorityQueue(_dropmin(ngd, mincount))
-    w2id = Dict{String, Int}()
-    id2w = Dict{Int, String}()
-    for (i,j) in enumerate(pq)
+    vocab_hash = Dict{String, Int}()
+        for (i,j) in enumerate(pq)
         (k,l) = j
-        w2id[k] = i
-        id2w[i] = k
+        vocab_hash[k] = i
     end
-    (pq, w2id, id2w)
+    return pq, vocab_hash
 end
 
 function _dropmin(ngd, mincount)

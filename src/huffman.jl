@@ -1,67 +1,90 @@
-# if a file name is provided as String
-function createbinarytree(path::AbstractString, mincount::Int)
-    pq, n2id, id2n = makedicts(path, mincount)
-    id2w = copy(id2n)
-    w2id = copy(n2id)
-    mg = _createbinarytree(pq, n2id, id2n)
-    (mg, w2id, id2w)
+using DataStructures
+include("proc_doc.jl")
+
+struct HuffTree{N<:Int}
+    nparent::AbstractArray{N} # parents for each node
+    leftright::AbstractArray{N} # returns [[x]] for forward pass
 end
 
-# if a TextAnalysis type document is provided
-function createbinarytree(doc::AbstractDocument, mincount::Int)
-    pq, n2id, id2n = makedicts(doc, mincount)
-    id2w = copy(id2n)
-    w2id = copy(n2id)
-    mg = _createbinarytree(pq, n2id, id2n)
-    (mg, w2id, id2w)
-end
-#if a TextAnalysis Corpus is provided
-function createbinarytree(crps::Corpus, mincount::Int)
-    if length(crps.lexicon) == 0
-        update_lexicon!(crps)
+function rootpath(ht::HuffTree, vocab_hash::Dict, in_word::String)
+    ret = Array{Int, 1}()
+    leaf = vocab_hash[in_word]
+    lparent = ht.nparent[leaf]
+    lbin = ht.leftright[leaf]
+    while lparent > 0
+        push!(ret, lparent)
+        push!(ret, lbin)
+        @show ret
+        lbin = ht.leftright[lparent]
+        @show lbin
+        lparent = ht.nparent[lparent]
+        @show lparent
     end
-    pq, n2id, id2n = makedicts(crps, mincount)
-    id2w = copy(id2n)
-    w2id = copy(n2id)
-    mg = _createbinarytree(pq, n2id, id2n)
-    (mg, w2id, id2w)
+    ret
 end
 
-function _createbinarytree(pq::PriorityQueue, w2id::Dict{String, Int}, id2w::Dict{Int, String})
-    mg = MetaGraph(SimpleGraph(length(pq)))
+function createbinarytree(doc, mincount::Int)
+    pq, vocab_hash = makedicts(doc, mincount)
+    tmp_hash = copy(vocab_hash)
+    nparent, leftright = _binarytree!(pq, tmp_hash)
+    return HuffTree(nparent, leftright), vocab_hash
+end
 
-    #create nodes
-    while length(pq) > 1
-         _newnode!(mg, pq, w2id, id2w)
+function _binarytree!(pq::PriorityQueue, tmp_hash::Dict)
+    # initialize return values
+    asize = 2*length(tmp_hash)-1
+    nparent = zeros(Int, asize)
+    leftright = zeros(Int, asize)
+    # create nodes
+    while length(pq) > 2
+         _newnode!(pq, tmp_hash, nparent, leftright)
     end
-
-    mg
+    _lastnode!(pq, tmp_hash, nparent, leftright)
+    return nparent, leftright
 end
 
-function _newnode!(mg::MetaGraph, pq::PriorityQueue, w2id::Dict{String, Int}, id2w::Dict{Int, String})
-
-    #capture information about next two nodes
+function _newnode!(pq::PriorityQueue, tmp_hash::Dict, nparent::Array, leftright::Array)
+    #create node ids
     (nodea, prioritya) = dequeue_pair!(pq)
     (nodeb, priorityb) = dequeue_pair!(pq)
-    idxa = w2id[nodea]
-    idxb = w2id[nodeb]
+    idxa = tmp_hash[nodea]
+    idxb = tmp_hash[nodeb]
 
     #add a node to the graph
-    add_vertex!(mg)
-    idxnode = nv(mg)
+    idxnode = length(tmp_hash)+1
     prioritynode = prioritya + priorityb
     node = "node-$idxnode"
-    w2id[node] = idxnode
-    id2w[idxnode] = node
+    tmp_hash[node] = idxnode
 
     #connect the child nodes to the new node
-    add_edge!(mg, idxa, idxnode)
-    add_edge!(mg, idxb, idxnode)
+    nparent[idxa] = idxnode
+    nparent[idxb] = idxnode
 
     #set the binary value for the child nodes
-    set_prop!(mg, idxa, :bin, 0)
-    set_prop!(mg, idxb, :bin, 1)
+    leftright[idxa] = 1
+    leftright[idxb] = -1
 
     #enqueue the new node
     enqueue!(pq, node, prioritynode)
+end
+
+function _lastnode!(pq, tmp_hash, nparent, leftright)
+    #create node ids
+    (nodea, prioritya) = dequeue_pair!(pq)
+    (nodeb, priorityb) = dequeue_pair!(pq)
+    idxa = tmp_hash[nodea]
+    idxb = tmp_hash[nodeb]
+
+    #add a node to the graph
+    idxnode = length(tmp_hash)+1
+    node = "root"
+    tmp_hash[node] = idxnode
+
+    #connect the child nodes to the new node
+    nparent[idxa] = idxnode
+    nparent[idxb] = idxnode
+
+    #set the binary value for the child nodes
+    leftright[idxa] = 1
+    leftright[idxb] = -1
 end
