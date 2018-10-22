@@ -1,7 +1,7 @@
 using DataStructures
 include("proc_doc.jl")
 
-struct HuffTree{N<:Int}
+struct HuffTree{N<:Integer}
     nparent::AbstractArray{N} # parents for each node
     leftright::AbstractArray{N} # returns [[x]] for forward pass
 end

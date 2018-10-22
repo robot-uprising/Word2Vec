@@ -1,7 +1,7 @@
 using Test
 
 # code needed to run tests
-include("..\\src\\Word2Vec.jl")
+include("..\\src\\huffman.jl")
 include("utils.jl")
 
 # setup for tests
