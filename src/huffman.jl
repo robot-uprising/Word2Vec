@@ -1,6 +1,3 @@
-using DataStructures
-include("proc_doc.jl")
-
 struct HuffTree{N<:Integer}
     nparent::AbstractArray{N} # parents for each node
     leftright::AbstractArray{N} # returns [[x]] for forward pass
@@ -14,11 +11,8 @@ function rootpath(ht::HuffTree, vocab_hash::Dict, in_word::String)
     while lparent > 0
         push!(ret, lparent)
         push!(ret, lbin)
-        @show ret
         lbin = ht.leftright[lparent]
-        @show lbin
         lparent = ht.nparent[lparent]
-        @show lparent
     end
     ret
 end
@@ -31,6 +25,7 @@ function createbinarytree(doc, mincount::Int)
 end
 
 function _binarytree!(pq::PriorityQueue, tmp_hash::Dict)
+    @debug "creating Huffman tree"
     # initialize return values
     asize = 2*length(tmp_hash)-1
     nparent = zeros(Int, asize)

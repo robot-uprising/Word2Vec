@@ -1,5 +1,3 @@
-using TextAnalysis
-
 # if a file name is provided as String
 function makedicts(path::AbstractString, mincount::Int)
     return _makedicts(ngrams(FileDocument(path)), mincount)
@@ -19,6 +17,7 @@ function makedicts(crps::Corpus, mincount::Int)
 end
 
 function _makedicts(ngd::Dict, mincount::Int)
+    @debug "Loading text; creating PriorityQueue and vocab_hash"
     pq = PriorityQueue(_dropmin(ngd, mincount))
     vocab_hash = Dict{String, Int}()
         for (i,j) in enumerate(pq)

@@ -1,5 +1,5 @@
 @testset "huffman tree" begin
-    
+
     ht, vocab_hash = createbinarytree(docpath, 10)
     @test typeof(ht) == HuffTree{Int}
     @test typeof(vocab_hash) == Dict{String, Int}
