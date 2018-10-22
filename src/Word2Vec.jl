@@ -1,13 +1,7 @@
 module Word2Vec
 
-using LightGraphs
-using MetaGraphs
-using DataStructures
-using TextAnalysis
-
-include("proc_doc.jl")
 include("huffman.jl")
 
-# export 
+# export createbinarytree, rootpath, _binarytree!, _newnode!, _lastnode!, makedicts, _makedicts, _dropmin
 
 end

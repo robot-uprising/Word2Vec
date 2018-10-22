@@ -1,28 +1,18 @@
-using LightGraphs
-using MetaGraphs
-
-
 @testset "huffman tree" begin
+    
+    ht, vocab_hash = createbinarytree(docpath, 10)
+    @test typeof(ht) == HuffTree{Int}
+    @test typeof(vocab_hash) == Dict{String, Int}
+    @test length(ht.nparent) == 2*length(vocab_hash)-1
 
-    mg, w2id, id2w = createbinarytree(docpath, 10)
-    @test typeof(mg) == MetaGraph{Int64,Float64}
-    @test typeof(w2id) == Dict{String, Int}
-    @test typeof(id2w) == Dict{Int, String}
-    nodes = nv(mg)
-    @test nodes == 2*length(w2id)-1
+    ht, vocab_hash = createbinarytree(doc, 10)
+    @test typeof(ht) == HuffTree{Int}
+    @test typeof(vocab_hash) == Dict{String, Int}
+    @test length(ht.nparent) == 2*length(vocab_hash)-1
 
-    mg, w2id, id2w = createbinarytree(docpath, 10)
-    @test typeof(mg) == MetaGraph{Int64,Float64}
-    @test typeof(w2id) == Dict{String, Int}
-    @test typeof(id2w) == Dict{Int, String}
-    nodes = nv(mg)
-    @test nodes == 2*length(w2id)-1
-
-    mg, w2id, id2w = createbinarytree(docpath, 10)
-    @test typeof(mg) == MetaGraph{Int64,Float64}
-    @test typeof(w2id) == Dict{String, Int}
-    @test typeof(id2w) == Dict{Int, String}
-    nodes = nv(mg)
-    @test nodes == 2*length(w2id)-1
+    ht, vocab_hash = createbinarytree(crps, 10)
+    @test typeof(ht) == HuffTree{Int}
+    @test typeof(vocab_hash) == Dict{String, Int}
+    @test length(ht.nparent) == 2*length(vocab_hash)-1
 
 end
