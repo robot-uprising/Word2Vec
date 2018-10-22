@@ -1,8 +1,10 @@
+
+
 mutable struct W2VNetwork{S<:AbstractString, T<:Real, H<:Integer}
     wv::WordVectors{S,T,H} #WordVectors struct
     ht::HuffTree{H} #Huffman Tree struct
-    ov::AbstractArray{T,2} #Out put vectors
-    vocab_size::H
+    ov::AbstractArray{T,2} #Output vectors
+    vocab_size::H #I can't remember what this one means...
 end
 
 function W2VNetwork(doc, mincount::Integer, dims::Integer)
@@ -19,4 +21,12 @@ function W2VNetwork(doc, mincount::Integer, dims::Integer)
 end
 
 function _forwardpass
+
+
+end
+
+function _normpath(wn::W2VNetwork, in_word::String)
+    ret = _rootpath(wn.ht, wn.wv.vocab_hash, in_word)
+    ret = ret .- wn.vocab_size
+    return ret
 end

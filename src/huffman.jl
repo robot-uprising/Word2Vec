@@ -20,11 +20,11 @@ end
 function _createbinarytree(doc, mincount::Int)
     pq, vocab_hash = _makedicts(doc, mincount)
     tmp_hash = copy(vocab_hash)
-    nparent, leftright = _binarytree!(pq, tmp_hash)
+    nparent, leftright = _binarytree(pq, tmp_hash)
     return HuffTree(nparent, leftright), vocab_hash
 end
 
-function _binarytree!(pq::PriorityQueue, tmp_hash::Dict)
+function _binarytree(pq::PriorityQueue, tmp_hash::Dict)
     @debug "creating Huffman tree"
     # initialize return values
     asize = 2*length(tmp_hash)-1
@@ -63,7 +63,7 @@ function _newnode!(pq::PriorityQueue, tmp_hash::Dict, nparent::Array, leftright:
     enqueue!(pq, node, prioritynode)
 end
 
-function _lastnode!(pq, tmp_hash, nparent, leftright)
+function _lastnode!(pq::PriorityQueue, tmp_hash::Dict, nparent::Array, leftright::Array)
     #create node ids
     (nodea, prioritya) = dequeue_pair!(pq)
     (nodeb, priorityb) = dequeue_pair!(pq)

@@ -1,7 +1,9 @@
 # module Word2Vec
 
-using DataStructures: PriorityQueue
 using TextAnalysis
+using DataStructures: PriorityQueue
+using LinearAlgebra: ⋅
+using Flux: σ
 
 import Base: show, size
 
@@ -12,5 +14,3 @@ include("network.jl")
 
 
 # end
-# doc = "..\\data\\shakespeare.txt"
-# network = W2VNetwork(crps, 10, 300)
