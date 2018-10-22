@@ -7,7 +7,7 @@ end
 
 function W2VNetwork(doc, mincount::Integer, dims::Integer)
     @debug "Commencing network build"
-    ht, vocab_hash = createbinarytree(doc, mincount)
+    ht, vocab_hash = _createbinarytree(doc, mincount)
     @debug "generating inital vector states"
     vocab_size = length(vocab_hash)
     vocab = Array{String}(undef, vocab_size)
@@ -15,10 +15,8 @@ function W2VNetwork(doc, mincount::Integer, dims::Integer)
         vocab[j] = i
     end
     wv = WordVectors(vocab, randn(dims, vocab_size), vocab_hash)
-    ov = randn()
     return W2VNetwork(wv, ht, randn(vocab_size-1, dims), vocab_size)
 end
 
-function
-doc = "..\\data\\shakespeare.txt"
-network = W2VNetwork(doc, 10, 300)
+function _forwardpass
+end

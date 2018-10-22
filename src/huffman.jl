@@ -3,7 +3,7 @@ struct HuffTree{N<:Integer}
     leftright::AbstractArray{N} # returns [[x]] for forward pass
 end
 
-function rootpath(ht::HuffTree, vocab_hash::Dict, in_word::String)
+function _rootpath(ht::HuffTree, vocab_hash::Dict, in_word::String)
     ret = Array{Int, 1}()
     leaf = vocab_hash[in_word]
     lparent = ht.nparent[leaf]
@@ -17,8 +17,8 @@ function rootpath(ht::HuffTree, vocab_hash::Dict, in_word::String)
     ret
 end
 
-function createbinarytree(doc, mincount::Int)
-    pq, vocab_hash = makedicts(doc, mincount)
+function _createbinarytree(doc, mincount::Int)
+    pq, vocab_hash = _makedicts(doc, mincount)
     tmp_hash = copy(vocab_hash)
     nparent, leftright = _binarytree!(pq, tmp_hash)
     return HuffTree(nparent, leftright), vocab_hash

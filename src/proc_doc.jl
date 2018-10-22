@@ -1,22 +1,22 @@
 # if a file name is provided as String
-function makedicts(path::AbstractString, mincount::Int)
-    return _makedicts(ngrams(FileDocument(path)), mincount)
+function _makedicts(path::AbstractString, mincount::Int)
+    return _dicts(ngrams(FileDocument(path)), mincount)
 end
 
 # if a TextAnalysis type document is provided
-function makedicts(doc::AbstractDocument, mincount::Int)
-    return _makedicts(ngrams(doc), mincount)
+function _makedicts(doc::AbstractDocument, mincount::Int)
+    return _dicts(ngrams(doc), mincount)
 end
 
 # if a TextAnalysis Corpus is provided
-function makedicts(crps::Corpus, mincount::Int)
+function _makedicts(crps::Corpus, mincount::Int)
     if length(crps.lexicon) == 0
         update_lexicon!(crps)
     end
-    return _makedicts(crps.lexicon, mincount)
+    return _dicts(crps.lexicon, mincount)
 end
 
-function _makedicts(ngd::Dict, mincount::Int)
+function _dicts(ngd::Dict, mincount::Int)
     @debug "Loading text; creating PriorityQueue and vocab_hash"
     pq = PriorityQueue(_dropmin(ngd, mincount))
     vocab_hash = Dict{String, Int}()

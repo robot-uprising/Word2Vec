@@ -12,3 +12,5 @@ include("network.jl")
 
 
 # end
+# doc = "..\\data\\shakespeare.txt"
+# network = W2VNetwork(crps, 10, 300)
