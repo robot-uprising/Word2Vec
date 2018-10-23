@@ -4,17 +4,18 @@ struct HuffTree{N<:Integer}
 end
 
 function _rootpath(ht::HuffTree, vocab_hash::Dict, in_word::String)
-    ret = Array{Int, 1}()
+    nodepath = Array{Int, 1}()
+    binpath = Array{Int, 1}()
     leaf = vocab_hash[in_word]
     lparent = ht.nparent[leaf]
     lbin = ht.leftright[leaf]
     while lparent > 0
-        push!(ret, lparent)
-        push!(ret, lbin)
+        push!(nodepath, lparent)
+        push!(binpath, lbin)
         lbin = ht.leftright[lparent]
         lparent = ht.nparent[lparent]
     end
-    ret
+    return nodepath, binpath
 end
 
 function _createbinarytree(doc, mincount::Int)

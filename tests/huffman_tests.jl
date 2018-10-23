@@ -17,8 +17,10 @@
 
     ary = Array{Array{Int64,1},1}()
     for i in keys(vocab_hash)
-           push!(ary, _rootpath(ht, vocab_hash, i))
+        nodepath, binpath = _rootpath(ht, vocab_hash, i)
+        push!(ary, binpath)
     end
+
     @test allunique(ary)
-    
+
 end

@@ -1,9 +1,9 @@
 # module Word2Vec
 
 using TextAnalysis
-using DataStructures: PriorityQueue
-using LinearAlgebra: ⋅
-using Flux: σ
+using DataStructures
+using LinearAlgebra
+using Flux
 
 import Base: show, size
 
