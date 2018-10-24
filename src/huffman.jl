@@ -1,45 +1,55 @@
+'''
+"HuffTree" Huffman tree struct
+    nodeparent::AbstractArray -- Each array index representing a node
+        of the Huffman tree.  The value at each index represents the
+        parent node of the index node.
+    branch::AbstractArray --  Each array index representing a node
+        of the Huffman tree.  The value at each index represents whether
+        the index node branched left (-1) or right (1) from the parent
+        node.
+'''
 struct HuffTree{N<:Integer}
-    nparent::AbstractArray{N} # parents for each node
-    leftright::AbstractArray{N} # returns [[x]] for forward pass
+    nodeparent::AbstractArray{N}
+    branch::AbstractArray{N}
 end
 
 function _rootpath(ht::HuffTree, vocab_hash::Dict, in_word::String)
     nodepath = Array{Int, 1}()
-    binpath = Array{Int, 1}()
+    branchpath = Array{Int, 1}()
     leaf = vocab_hash[in_word]
-    lparent = ht.nparent[leaf]
-    lbin = ht.leftright[leaf]
+    lparent = ht.nodeparent[leaf]
+    lbin = ht.branch[leaf]
     while lparent > 0
         push!(nodepath, lparent)
-        push!(binpath, lbin)
-        lbin = ht.leftright[lparent]
-        lparent = ht.nparent[lparent]
+        push!(branchpath, lbin)
+        lbin = ht.branch[lparent]
+        lparent = ht.nodeparent[lparent]
     end
-    return nodepath, binpath
+    return nodepath, branchpath
 end
 
 function _createbinarytree(doc, mincount::Int)
     pq, vocab_hash = _makedicts(doc, mincount)
     tmp_hash = copy(vocab_hash)
-    nparent, leftright = _binarytree(pq, tmp_hash)
-    return HuffTree(nparent, leftright), vocab_hash
+    nodeparent, branch = _binarytree(pq, tmp_hash)
+    return HuffTree(nodeparent, branch), vocab_hash
 end
 
 function _binarytree(pq::PriorityQueue, tmp_hash::Dict)
     @debug "creating Huffman tree"
     # initialize return values
     asize = 2*length(tmp_hash)-1
-    nparent = zeros(Int, asize)
-    leftright = zeros(Int, asize)
+    nodeparent = zeros(Int, asize)
+    branch = zeros(Int, asize)
     # create nodes
     while length(pq) > 2
-         _newnode!(pq, tmp_hash, nparent, leftright)
+         _newnode!(pq, tmp_hash, nodeparent, branch)
     end
-    _lastnode!(pq, tmp_hash, nparent, leftright)
-    return nparent, leftright
+    _lastnode!(pq, tmp_hash, nodeparent, branch)
+    return nodeparent, branch
 end
 
-function _newnode!(pq::PriorityQueue, tmp_hash::Dict, nparent::Array, leftright::Array)
+function _newnode!(pq::PriorityQueue, tmp_hash::Dict, nodeparent::Array, branch::Array)
     #create node ids
     (nodea, prioritya) = dequeue_pair!(pq)
     (nodeb, priorityb) = dequeue_pair!(pq)
@@ -53,18 +63,18 @@ function _newnode!(pq::PriorityQueue, tmp_hash::Dict, nparent::Array, leftright:
     tmp_hash[node] = idxnode
 
     #connect the child nodes to the new node
-    nparent[idxa] = idxnode
-    nparent[idxb] = idxnode
+    nodeparent[idxa] = idxnode
+    nodeparent[idxb] = idxnode
 
     #set the binary value for the child nodes
-    leftright[idxa] = 1
-    leftright[idxb] = -1
+    branch[idxa] = 1
+    branch[idxb] = -1
 
     #enqueue the new node
     enqueue!(pq, node, prioritynode)
 end
 
-function _lastnode!(pq::PriorityQueue, tmp_hash::Dict, nparent::Array, leftright::Array)
+function _lastnode!(pq::PriorityQueue, tmp_hash::Dict, nodeparent::Array, branch::Array)
     #create node ids
     (nodea, prioritya) = dequeue_pair!(pq)
     (nodeb, priorityb) = dequeue_pair!(pq)
@@ -77,10 +87,10 @@ function _lastnode!(pq::PriorityQueue, tmp_hash::Dict, nparent::Array, leftright
     tmp_hash[node] = idxnode
 
     #connect the child nodes to the new node
-    nparent[idxa] = idxnode
-    nparent[idxb] = idxnode
+    nodeparent[idxa] = idxnode
+    nodeparent[idxb] = idxnode
 
     #set the binary value for the child nodes
-    leftright[idxa] = 1
-    leftright[idxb] = -1
+    branch[idxa] = 1
+    branch[idxb] = -1
 end

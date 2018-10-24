@@ -11,6 +11,7 @@ include("proc_doc.jl")
 include("huffman.jl")
 include("wordvectors.jl")
 include("network.jl")
+include("interface.jl")
 
 
 # end
