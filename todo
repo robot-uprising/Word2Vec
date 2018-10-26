@@ -1,0 +1,4 @@
+add ngram fuction and return ngrams from proc_doc
+figure out whether a Tracked array from Flux will update properly
+tests of network
+clean up interface

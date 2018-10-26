@@ -17,7 +17,7 @@
         hs <Int>
             Use Hierarchical Softmax; default is 1 (0 = not used)
         negative <Int>
-            Number of negative examples; default is 0, common values are 
+            Number of negative examples; default is 0, common values are
             5 - 10 (0 = not used)
         threads <Int>
             Use <Int> threads (default 12)
@@ -41,20 +41,20 @@
             The vocabulary will be read from <file>, not constructed from the
             training data
         verbose <Bool>
-            Print output from training 
+            Print output from training
 """
-function word2vec(train::AbstractString, output::AbstractString; 
+function word2vec(train::AbstractString, output::AbstractString;
                   size::Int=100, window::Int=5, sample::AbstractFloat=1e-3,
-                  hs::Int=0, negative::Int=5, threads::Int=12, iter::Int=5, 
+                  hs::Int=0, negative::Int=5, threads::Int=12, iter::Int=5,
                   min_count::Int=5, alpha::AbstractFloat=0.025,
-                  debug::Int=2, binary::Int=0, cbow::Int=1, 
-                  save_vocab=Void(), read_vocab=Void(), 
+                  debug::Int=2, binary::Int=0, cbow::Int=1,
+                  save_vocab=Void(), read_vocab=Void(),
                   verbose::Bool=false)
 
     command = joinpath(dirname(@__FILE__), "..", "deps", "src", "word2vec-c", "./word2vec")
     parameters = AbstractString[]
     args = ["-train", "-output", "-size", "-window", "-sample", "-hs",
-            "-negative", "-threads", "-iter", "-min-count", "-alpha", 
+            "-negative", "-threads", "-iter", "-min-count", "-alpha",
             "-debug", "-binary", "-cbow"]
     values = [train, output, size, window, sample, hs, negative, threads,
               iter, min_count, alpha, debug, binary, cbow]
@@ -70,7 +70,7 @@ function word2vec(train::AbstractString, output::AbstractString;
     if read_vocab != Void()
         push!(parameters, "-read-vocab")
         push!(parameters, string(read_vocab))
-    end        
+    end
     run(`$(command) $(parameters)`)
 end
 
@@ -106,8 +106,8 @@ end
         alpha <AbstractFloat>
             Set the starting learning rate; default is 0.025
         classes <Int>
-            Output word classes rather than word vectors; default number of 
-            classes is 0.    
+            Output word classes rather than word vectors; default number of
+            classes is 0.
         debug <Int>
             Set the debug mode (default = 2 = more info during training)
         binary <Int>
@@ -121,20 +121,20 @@ end
             The vocabulary will be read from <file>, not constructed from the
             training data
         verbose <Bool>
-            Print output from training 
+            Print output from training
 """
-function word2clusters(train::AbstractString, output::AbstractString, 
+function word2clusters(train::AbstractString, output::AbstractString,
                        classes::Int; size::Int=100, window::Int=5,
-                       sample::AbstractFloat=0., hs::Int=0, 
+                       sample::AbstractFloat=0., hs::Int=0,
                        negative::Int=5, threads::Int=1, iter::Int=5,
                        min_count::Int=5, alpha::AbstractFloat=0.025,
                        debug::Int=2, binary::Int=0, cbow::Int=1,
-                       save_vocab=Void(), read_vocab=Void(), 
+                       save_vocab=Void(), read_vocab=Void(),
                        verbose::Bool=false)
     command = joinpath(dirname(@__FILE__), "..", "deps", "src", "word2vec-c", "./word2vec")
     parameters = AbstractString[]
     args = ["-train", "-output", "-size", "-window", "-sample", "-hs",
-            "-negative", "-threads", "-iter", "-min-count", "-alpha", 
+            "-negative", "-threads", "-iter", "-min-count", "-alpha",
             "-debug", "-binary", "-cbow", "-classes"]
     values = [train, output, size, window, sample, hs, negative, threads,
               iter, min_count, alpha, debug, binary, cbow, classes]
@@ -149,7 +149,7 @@ function word2clusters(train::AbstractString, output::AbstractString,
     if read_vocab != Void()
         push!(parameters, "-read-vocab")
         push!(parameters, string(read_vocab))
-    end 
+    end
     run(`$(command) $(parameters)`)
 end
 
@@ -158,15 +158,15 @@ end
 
     Parameters for training:
 	train <file>
-	      Use text data from <file> to train the model 
+	      Use text data from <file> to train the model
 	output <file>
-              Use <file> to save the resulting word vectors / 
+              Use <file> to save the resulting word vectors /
               word clusters / phrases
 	min_count <Int>
-              This will discard words that appear less than <int> times; 
+              This will discard words that appear less than <int> times;
               default is 5
 	threshold <AbstractFloat>
-      	      The <AbstractFloat> value represents threshold for 
+      	      The <AbstractFloat> value represents threshold for
               forming the phrases (higher means less phrases); default 100
 	debug <Int>
 	      Set the debug mode (default = 2 = more info during training)
