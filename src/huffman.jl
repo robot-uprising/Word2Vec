@@ -4,7 +4,7 @@
 #         parent node of the index node.
 #     branch::AbstractArray --  Each array index representing a node
 #         of the Huffman tree.  The value at each index represents whether
-#         the index node branched left (-1) or right (1) from the parent
+#         the index node branched left (1) or right (0) from the parent
 #         node.
 
 struct HuffTree{N<:Integer}
@@ -72,7 +72,7 @@ function _newnode!(pq::PriorityQueue, tmp_hash::Dict, nodeparent::Array, branch:
 
     #set the binary value for the child nodes
     branch[idxa] = 1
-    branch[idxb] = -1
+    branch[idxb] = 0
 
     #enqueue the new node
     enqueue!(pq, node, prioritynode)
@@ -96,5 +96,5 @@ function _lastnode!(pq::PriorityQueue, tmp_hash::Dict, nodeparent::Array, branch
 
     #set the binary value for the child nodes
     branch[idxa] = 1
-    branch[idxb] = -1
+    branch[idxb] = 0
 end
