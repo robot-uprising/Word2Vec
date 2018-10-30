@@ -29,7 +29,7 @@ end
 Return the vocabulary as a vector of words of the WordVectors `wv`.
 """
 vocabulary(wv::WordVectors) = wv.vocab
-
+vocabulary(wn::W2W2VNetwork) = wn.wv.vocab
 """
     in_vocabulary(wv, word)
 
@@ -37,6 +37,7 @@ Return `true` if `word` is part of the vocabulary of the WordVector `wv` and
 `false` otherwise.
 """
 in_vocabulary(wv::WordVectors, word::AbstractString) = word in wv.vocab
+in_vocabulary(wn::W2W2VNetwork, word::AbstractString) = word in wn.wv.vocab
 
 """
     size(wv)
@@ -44,7 +45,7 @@ in_vocabulary(wv::WordVectors, word::AbstractString) = word in wv.vocab
 Return the word vector length and the number of words as a tuple.
 """
 size(wv::WordVectors) = size(wv.vectors)
-
+size(wn::W2W2VNetwork) = size(wn.wv.vectors)
 
 """
     index(wv, word)
@@ -52,6 +53,7 @@ size(wv::WordVectors) = size(wv.vectors)
 Return the index of `word` from the WordVectors `wv`.
 """
 index(wv::WordVectors, word) = wv.vocab_hash[word]
+index(wn::W2W2VNetwork, word) = wn.wv.vocab_hash[word]
 
 """
     get_vector(wv, word)
@@ -61,6 +63,8 @@ Return the vector representation of `word` from the WordVectors `wv`.
 get_vector(wv::WordVectors, word) =
       (idx = wv.vocab_hash[word]; wv.vectors[:,idx])
 
+get_vector(wn::W2W2VNetwork, word) =
+            (idx = wn.wv.vocab_hash[word]; wn.wv.vectors[:,idx])
 """
     cosine(wv, word, n=10)
 
@@ -74,6 +78,12 @@ function cosine(wv::WordVectors, word, n=10)
     return topn_positions, topn_metrics
 end
 
+function cosine(wn::W2W2VNetwork, word, n=10)
+    metrics = wn.wv.vectors'*get_vector(wn, word)
+    topn_positions = sortperm(metrics[:], rev = true)[1:n]
+    topn_metrics = metrics[topn_positions]
+    return topn_positions, topn_metrics
+end
 
 """
     similarity(wv, word1, word2)
@@ -84,6 +94,9 @@ function similarity(wv::WordVectors, word1, word2)
     return get_vector(wv, word1)'*get_vector(wv, word2)
 end
 
+function similarity(wn::W2W2VNetwork, word1, word2)
+    return get_vector(wn, word1)'*get_vector(wn, word2)
+end
 
 """
     cosine_similar_words(wv, word, n=10)
@@ -96,6 +109,10 @@ function cosine_similar_words(wv::WordVectors, word, n=10)
     return vocabulary(wv)[indx]
 end
 
+function cosine_similar_words(wn::W2W2VNetwork, word, n=10)
+    indx, metr = cosine(wn, word, n)
+    return vocabulary(wn)[indx]
+end
 
 """
     analogy(wv, pos, neg, n=5)
@@ -133,6 +150,34 @@ function analogy(wv::WordVectors, pos::AbstractArray, neg::AbstractArray, n= 5)
     return topn_positions, topn_metrics
 end
 
+function analogy(wn::W2VNetwork, pos::AbstractArray, neg::AbstractArray, n= 5)
+    m, n_vocab = size(wn)
+    n_pos = length(pos)
+    n_neg = length(neg)
+    anal_vecs = Array{AbstractFloat}(m, n_pos + n_neg)
+
+    for (i, word) in enumerate(pos)
+        anal_vecs[:,i] = get_vector(wn, word)
+    end
+    for (i, word) in enumerate(neg)
+        anal_vecs[:,i+n_pos] = -get_vector(wn, word)
+    end
+    mean_vec = mean(anal_vecs, 2)
+    metrics = wn.wv.vectors'*mean_vec
+    top_positions = sortperm(metrics[:], rev = true)[1:n+n_pos+n_neg]
+    for word in [pos;neg]
+        idx = index(wn, word)
+        loc = findfirst(top_positions, idx)
+        if loc != 0
+            splice!(top_positions, loc)
+        end
+    end
+    topn_positions = top_positions[1:n]
+    topn_metrics = metrics[topn_positions]
+    return topn_positions, topn_metrics
+end
+
+
 """
     analogy_words(wv, pos, neg, n=5)
 
@@ -144,6 +189,10 @@ function analogy_words(wv::WordVectors, pos, neg, n=5)
     return vocabulary(wv)[indx]
 end
 
+function analogy_words(wn::W2VNetwork, pos, neg, n=5)
+    indx, metr = analogy(wn, pos, neg, n)
+    return vocabulary(wn)[indx]
+end
 
 """
     wordvectors(fname [,type=Float64][; kind=:text])
