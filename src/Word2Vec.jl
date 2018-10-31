@@ -9,8 +9,8 @@ import Base: show, size
 
 include("proc_doc.jl")
 include("huffman.jl")
-include("wordvectors.jl")
 include("network.jl")
+include("wordvectors.jl")
 include("interface.jl")
 
 # end
