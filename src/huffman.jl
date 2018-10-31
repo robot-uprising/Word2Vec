@@ -1,4 +1,4 @@
-struct HuffTree{N<:Integer}
+struct HuffTree{N} where N<:Integer
     nodeparent::AbstractArray{N}
     branch::AbstractArray{N}
 end
