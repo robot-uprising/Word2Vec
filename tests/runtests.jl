@@ -13,4 +13,5 @@ crps = gen_test_corpus(crpspath)
 # test code
 include("proc_doc_tests.jl")
 include("huffman_tests.jl")
+include("wordvectors_tests.jl")
 include("network_tests.jl")

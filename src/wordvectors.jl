@@ -29,7 +29,8 @@ end
 Return the vocabulary as a vector of words of the WordVectors `wv`.
 """
 vocabulary(wv::WordVectors) = wv.vocab
-vocabulary(wn::W2W2VNetwork) = wn.wv.vocab
+vocabulary(wn::W2VNetwork) = wn.wv.vocab
+
 """
     in_vocabulary(wv, word)
 
@@ -37,7 +38,7 @@ Return `true` if `word` is part of the vocabulary of the WordVector `wv` and
 `false` otherwise.
 """
 in_vocabulary(wv::WordVectors, word::AbstractString) = word in wv.vocab
-in_vocabulary(wn::W2W2VNetwork, word::AbstractString) = word in wn.wv.vocab
+in_vocabulary(wn::W2VNetwork, word::AbstractString) = word in wn.wv.vocab
 
 """
     size(wv)
@@ -45,7 +46,7 @@ in_vocabulary(wn::W2W2VNetwork, word::AbstractString) = word in wn.wv.vocab
 Return the word vector length and the number of words as a tuple.
 """
 size(wv::WordVectors) = size(wv.vectors)
-size(wn::W2W2VNetwork) = size(wn.wv.vectors)
+size(wn::W2VNetwork) = size(wn.wv.vectors)
 
 """
     index(wv, word)
@@ -53,7 +54,7 @@ size(wn::W2W2VNetwork) = size(wn.wv.vectors)
 Return the index of `word` from the WordVectors `wv`.
 """
 index(wv::WordVectors, word) = wv.vocab_hash[word]
-index(wn::W2W2VNetwork, word) = wn.wv.vocab_hash[word]
+index(wn::W2VNetwork, word) = wn.wv.vocab_hash[word]
 
 """
     get_vector(wv, word)
@@ -63,7 +64,7 @@ Return the vector representation of `word` from the WordVectors `wv`.
 get_vector(wv::WordVectors, word) =
       (idx = wv.vocab_hash[word]; wv.vectors[:,idx])
 
-get_vector(wn::W2W2VNetwork, word) =
+get_vector(wn::W2VNetwork, word) =
             (idx = wn.wv.vocab_hash[word]; wn.wv.vectors[:,idx])
 """
     cosine(wv, word, n=10)
@@ -78,7 +79,7 @@ function cosine(wv::WordVectors, word, n=10)
     return topn_positions, topn_metrics
 end
 
-function cosine(wn::W2W2VNetwork, word, n=10)
+function cosine(wn::W2VNetwork, word, n=10)
     metrics = wn.wv.vectors'*get_vector(wn, word)
     topn_positions = sortperm(metrics[:], rev = true)[1:n]
     topn_metrics = metrics[topn_positions]
@@ -94,7 +95,7 @@ function similarity(wv::WordVectors, word1, word2)
     return get_vector(wv, word1)'*get_vector(wv, word2)
 end
 
-function similarity(wn::W2W2VNetwork, word1, word2)
+function similarity(wn::W2VNetwork, word1, word2)
     return get_vector(wn, word1)'*get_vector(wn, word2)
 end
 
@@ -109,7 +110,7 @@ function cosine_similar_words(wv::WordVectors, word, n=10)
     return vocabulary(wv)[indx]
 end
 
-function cosine_similar_words(wn::W2W2VNetwork, word, n=10)
+function cosine_similar_words(wn::W2VNetwork, word, n=10)
     indx, metr = cosine(wn, word, n)
     return vocabulary(wn)[indx]
 end
