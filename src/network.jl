@@ -24,9 +24,3 @@ function _forwardpass
 
 
 end
-
-function _normpath(wn::W2VNetwork, in_word::String)
-    nodepath, branchpath = _rootpath(wn.ht, wn.wv.vocab_hash, in_word)
-    nodepath = nodepath .- wn.vocab_size
-    return nodepath, branchpath
-end

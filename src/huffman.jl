@@ -1,19 +1,13 @@
-# HuffTree binary tree struct
-#     nodeparent::AbstractArray -- Each array index representing a node
-#         of the Huffman tree.  The value at each index represents the
-#         parent node of the index node.
-#     branch::AbstractArray --  Each array index representing a node
-#         of the Huffman tree.  The value at each index represents whether
-#         the index node branched left (1) or right (0) from the parent
-#         node.
-
 struct HuffTree{N<:Integer}
     nodeparent::AbstractArray{N}
     branch::AbstractArray{N}
 end
 
-# _rootpath function determines the path from a given node of a HuffTree
-#     to the root node of the tree
+function _normpath(ht::HuffTree, vocab_hash::Dict, in_word::String)
+    nodepath, branchpath = _rootpath(wn.ht, wn.wv.vocab_hash, in_word)
+    nodepath = nodepath .- length(vocab_hash)
+    return nodepath, branchpath
+end
 
 function _rootpath(ht::HuffTree, vocab_hash::Dict, in_word::String)
     nodepath = Array{Int, 1}()
@@ -29,6 +23,9 @@ function _rootpath(ht::HuffTree, vocab_hash::Dict, in_word::String)
     end
     return nodepath, branchpath
 end
+
+
+
 
 # _createbinarytree uses accessory functions _binarytree, _newnode! and _lastnode!
 #     to generate a Huffman tree
