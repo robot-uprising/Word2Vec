@@ -3,14 +3,38 @@
 using TextAnalysis
 using DataStructures
 using LinearAlgebra
-using Flux
 
 import Base: show, size
 
-include("proc_doc.jl")
+include("inputprocessing.jl")
+
 include("huffman.jl")
-include("network.jl")
+
 include("wordvectors.jl")
-include("interface.jl")
+export
+    # types
+    WordVectors,
+
+    # functions
+    wordvectors
+
+include("network.jl")
+export
+    # types
+    W2VNetwork,
+
+    # functions
+    word2vec, train!, extract_vectors! # still need to be implemented
+
+include("vectorinteract.jl")
+    export
+    # functions
+    index, size,
+    vocabulary, in_vocabulary,
+    get_vector, get_cluster, get_words,
+    cosine, cosine_similar_words,
+    analogy, analogy_words, similarity
+
+include("interface.jl") # should probs get rid of this
 
 # end
