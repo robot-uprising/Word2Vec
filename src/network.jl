@@ -2,11 +2,11 @@
 
 mutable struct W2VNetwork{S<:AbstractString, T<:Real, H<:Integer}
     wv::WordVectors{S,T,H} #WordVectors struct
-    ht::HuffTree{H} #Huffman Tree struct
-    ov::AbstractArray{T,2} #Output vectors
-    vocab_size::H #I can't remember what this one means...
+    ht::Union{HuffTree{H}, Nothing} #Huffman Tree struct
+    ov::Union{AbstractArray{T,2}, Nothing} #Output vectors
 end
 
+# fix this so we just word with array vocab
 function W2VNetwork(doc, mincount::Integer, dims::Integer)
     @debug "Commencing network build"
     ht, vocab_hash = _createbinarytree(doc, mincount)
@@ -20,7 +20,11 @@ function W2VNetwork(doc, mincount::Integer, dims::Integer)
     return W2VNetwork(wv, ht, randn(vocab_size-1, dims), vocab_size)
 end
 
-function _forwardpass
-
-
-end
+# need to implement
+#     word2vec - initializes and trains as directed
+#         train! - in place update of wieghts
+#             needs to be different based on :skipgram or :cbow
+#             also needs to be different for :hs or :ns
+#
+#     extract_vectors - returns wordvectors
+#     dump_model! - sets everything to nothing except the wordvectors

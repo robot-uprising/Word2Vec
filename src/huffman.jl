@@ -3,12 +3,15 @@ struct HuffTree{N} where N<:Integer
     branch::AbstractArray{N}
 end
 
-function _normpath(ht::HuffTree, vocab_hash::Dict, in_word::String)
+# generate the path from leaf to root, normalized to the number of leaves
+function _normpath(ht, vocab_hash, in_word)
     nodepath, branchpath = _rootpath(wn.ht, wn.wv.vocab_hash, in_word)
     nodepath = nodepath .- length(vocab_hash)
     return nodepath, branchpath
 end
 
+# generate the path from leaf to root.  because leaf nodeas all have index less
+# than internal nodes, the path is offset relative to 1 by the number of leaves
 function _rootpath(ht::HuffTree, vocab_hash::Dict, in_word::String)
     nodepath = Array{Int, 1}()
     branchpath = Array{Int, 1}()
