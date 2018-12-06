@@ -1,7 +1,8 @@
 using IterTools
 using DataStructures
 
-# for filename input
+#sentences is an array of sentences to be parsed
+#preprecessing should provide this array from the document
 function process_input(sentences::Array{<:AbstractString,1}, mincount::Integer, window::Integer)
     unigrms = _unigrams(sentences)
     freq_table, vocab_hash = _dicts(unigrms, mincount)

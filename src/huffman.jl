@@ -1,3 +1,5 @@
+using DataStructures
+
 struct HuffmanTree{M<:Integer, N<:Integer}
     nodeparent::AbstractArray{M}
     branch::AbstractArray{N}
@@ -67,7 +69,7 @@ function _lastnode!(pq::PriorityQueue, tmp_hash::Dict, nodeparent::Array, branch
 end
 
 # generate the path from leaf to root, normalized to the number of leaves
-function normpath(ht, vocab_hash, in_word)
+function normalizedpath(ht, vocab_hash, in_word)
     nodepath, branchpath = rootpath(wn.ht, wn.wv.vocab_hash, in_word)
     nodepath = nodepath .- length(vocab_hash)
     return nodepath, branchpath

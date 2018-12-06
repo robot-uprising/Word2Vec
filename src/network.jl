@@ -27,7 +27,9 @@ end
 
 function extract_vectors!(wn:W2W2VNetwork)
     wv = copy(wn.wv)
-    wn = nothing
+    wn.wv = nothing
+    wn.ht = nothing
+    wn.ov = nothing
     return wv
 end
 
