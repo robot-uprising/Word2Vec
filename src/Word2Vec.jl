@@ -1,6 +1,5 @@
 # module Word2Vec
-
-using TextAnalysis
+using IterTools
 using DataStructures
 using LinearAlgebra
 
@@ -34,7 +33,5 @@ include("vectorinteract.jl")
     get_vector, get_cluster, get_words,
     cosine, cosine_similar_words,
     analogy, analogy_words, similarity
-
-include("interface.jl") # should probs get rid of this
 
 # end
