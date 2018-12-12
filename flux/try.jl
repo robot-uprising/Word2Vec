@@ -11,8 +11,8 @@ ov = param(randn(10000,200)/3)
 # nodeprob: returns probability you are going the right way at a node
 # h = internal representation
 # node = the current node number
-# branch = the direction to branch from the node
-# also requires predefined ov (output vector) matrix as a Flux param
+# branch is the direction to branch from the node
+# also requires a param(ov) (output vector) matrix
 function nodeprob(h, node, branch)
     v = ov[node,:]
     branch == 1 ? □ = 1 : □ = -1
