@@ -1,16 +1,12 @@
-
-
 mutable struct W2VNetwork{S<:AbstractString, T<:Real, H<:Integer}
     wv::WordVectors{S,T,H} #WordVectors struct
-    ht::HuffTree{H} #Huffman Tree struct
-    ov::AbstractArray{T,2} #Output vectors
-    vocab_size::H #I can't remember what this one means...
+    ht::Union{HuffmanTree{H}, Nothing} #Huffman Tree struct
+    ov::Union{AbstractArray{T,2}, Nothing} #Output vectors
+    #frequency table???
 end
 
-function W2VNetwork(doc, mincount::Integer, dims::Integer)
-    @debug "Commencing network build"
-    ht, vocab_hash = _createbinarytree(doc, mincount)
-    @debug "generating inital vector states"
+# fix this so we just word with array vocab
+function W2VNetwork(ht::HuffmanTree, vocab_hash::Dict, dims::Integer)
     vocab_size = length(vocab_hash)
     vocab = Array{String}(undef, vocab_size)
     for (i, j) in vocab_hash
@@ -20,13 +16,29 @@ function W2VNetwork(doc, mincount::Integer, dims::Integer)
     return W2VNetwork(wv, ht, randn(vocab_size-1, dims), vocab_size)
 end
 
-function _forwardpass
-
-
+function dump_model!(wn::W2VNetwork)
+    wn.ht = nothing
+    wn.ov = nothing
 end
 
-function _normpath(wn::W2VNetwork, in_word::String)
-    nodepath, branchpath = _rootpath(wn.ht, wn.wv.vocab_hash, in_word)
-    nodepath = nodepath .- wn.vocab_size
-    return nodepath, branchpath
+function extract_vectors(wn::W2VNetwork)
+    return wn.wv
 end
+
+function extract_vectors!(wn:W2W2VNetwork)
+    wv = copy(wn.wv)
+    wn.wv = nothing
+    wn.ht = nothing
+    wn.ov = nothing
+    return wv
+end
+
+# need to implement
+# maybe the word2vec stuff in a separate file
+#     word2vec - initializes and trains as directed
+#         train! - in place update of wieghts
+#             needs to be different based on :skipgram or :cbow
+#             also needs to be different for :hs or :ns
+#
+#     extract_vectors - returns wordvectors
+#     dump_model! - sets everything to nothing except the wordvectors
