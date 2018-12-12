@@ -43,8 +43,8 @@ end
 # creates PriorityQueue for HuffmanTree, as well as vocabulary hash dict, and drop words array
 function _dicts(ngd::Dict, mincount::Int)
     freq_table = _dropmin(ngd, mincount)
-        vocab_hash = Dict{String, Int}()
-        for (i,j) in enumerate(freq_table)
+    vocab_hash = Dict{String, Int}()
+    for (i,j) in enumerate(freq_table)
         (k,l) = j
         vocab_hash[k] = i
     end
