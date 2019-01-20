@@ -15,8 +15,8 @@ ov = param(randn(10000,200)/3)
 # also requires a param(ov) (output vector) matrix
 function nodeprob(h, node, branch)
     v = ov[node,:]
-    branch == 1 ? □ = 1 : □ = -1
-    return σ(□*dot(v,h))
+    branch == 1 ? ◫ = 1 : ◫ = -1
+    return σ(◫*dot(v,h))
 end
 
 # prob: returns probability(output word|input word)
@@ -30,9 +30,14 @@ end
 # loss is the -log of the probability(output word|input word)
 loss(h, nodes, branches) = -log(prob(h, nodes, branches))
 
-grad1 = Tracker.gradient(()->loss(h, nnode, bbranch), Params([ov]))
 
-a = grad1[ov]
+# try it out
+h = randn(200)/3
+nodes = [200,300,400,500]
+branches = [0,0,1,0]
 
-
-update!(ov, -0.1*a)
+for i in 1:3
+    grad1 = Tracker.gradient(()->loss(h, nodes, branches), Params([ov]))
+    a = grad1[ov]
+    update!(ov, -0.1*a)
+end

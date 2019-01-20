@@ -30,7 +30,7 @@ function _contexts(sentences::Array{<:AbstractString, 1}, vocab_hash::Dict, wind
     contexts = Array{IterTools.Partition, 1}()
     for sentence in sentences
         words = Array{AbstractString, 1}()
-        tmp = split(sentence)
+        tmp = split(sentence) #maybe use tokenize here.
         for word in tmp
             in(word, keys(vocab_hash)) ? push!(words, word) : continue
         end
