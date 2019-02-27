@@ -1,13 +1,13 @@
-# module Word2Vec
-using IterTools
-using DataStructures
-using LinearAlgebra
+module Word2Vec
+# using IterTools
+# using DataStructures
+# using LinearAlgebra
 
-import Base: show, size
+using Reexport
+@reexport using Huffman
 
 include("inputprocessing.jl")
 
-include("huffman.jl")
 
 include("wordvectors.jl")
 export

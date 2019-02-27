@@ -15,6 +15,8 @@ function WordVectors(vocab::AbstractArray{S,1},
     WordVectors(vocab, vectors, vocab_hash)
 end
 
+import Base: show, size
+
 function Base.show(io::IO, wv::WordVectors)
     len_vecs, num_words = size(wv.vectors)
     print(io, "WordVectors $(num_words) words, $(len_vecs)-element vectors")
