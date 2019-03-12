@@ -5,6 +5,12 @@ struct HuffmanTree{M<:Integer, N<:Integer}
     branch::AbstractArray{N}
 end
 
+"""
+    HuffmanTree(pq, vocab_hash)
+
+Take in a PriorityQueue(pq) and a vocabulary hash, and return a Huffman encoding
+of the words in pq.
+"""
 function HuffmanTree(pq::PriorityQueue, vocab_hash::Dict)
     tmp_hash = copy(vocab_hash)
 
