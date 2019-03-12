@@ -3,46 +3,44 @@ using DataStructures
 
 #sentences is an array of sentences to be parsed
 #preprocessing should provide this array from the document
-function process_input(sentences::Array{<:AbstractString,1}, mincount::Integer, window::Integer)
-    unigrms = _unigrams(sentences)
-    freq_table, vocab_hash = _dicts(unigrms, mincount)
+function _process_input(sentences::Array{Array{AbstractString, 1},1}, mincount::Integer, window::Integer)
+    unigrams = _unigrams(sentences)
+    freq_table, vocab_hash = _dicts(unigrams, mincount)
     pq = PriorityQueue(freq_table)
     # function to remove dropped words - add vocab hash to context function
-    contexts = _contexts(sentences, vocab_hash, window)
-    return pq, vocab_hash, contexts, unigrms
+    contexts = _contexts(sentences, window)
+    return pq, vocab_hash, contexts, unigrams
 end
 
-function _unigrams(sentences::Array{<:AbstractString, 1})
-    unigrms = Dict{String, Integer}()
+function _unigrams(sentences::Array{Array{AbstractString, 1},1})
+    unigrams = Dict{String, Integer}()
     for sentence in sentences
-        words = split(sentence)
-        for word in words
-            in(word, keys(unigrms)) ? unigrms[word] += 1 : unigrms[word] = 1
+        for word in sentence
+            in(word, keys(unigrams)) ? unigrams[word] += 1 : unigrams[word] = 1
         end
     end
-    unigrms
+    unigrams
 end
 
 # takes in array of sentences, returns an IterTools.Partition for each sentence
 # in the doc
-function _contexts(sentences::Array{<:AbstractString, 1}, vocab_hash::Dict, window::Integer)
+function _contexts(sentences::Array{Array{AbstractString,1},1}, window::Integer)
     size = window*2+1
     contexts = Array{IterTools.Partition, 1}()
     for sentence in sentences
-        words = Array{AbstractString, 1}()
-        tmp = split(sentence) #maybe use tokenize here.
-        for word in tmp
-            in(word, keys(vocab_hash)) ? push!(words, word) : continue
+        if isempty(sentence)
+            continue
+        else
+            length(sentence) ≥ size ? context = partition(sentence, size, 1) : context = partition(sentence, length(sentence), 1)
+            push!(contexts, context)
         end
-        length(words) ≥ size ? context = partition(words, size, 1) : context = partition(words, length(words), 1)
-        push!(contexts, context)
-        end
+    end
     return contexts
 end
 
 # creates PriorityQueue for HuffmanTree, as well as vocabulary hash dict, and drop words array
-function _dicts(ngd::Dict, mincount::Int)
-    freq_table = _dropmin(ngd, mincount)
+function _dicts(unigrams::Dict, mincount::Int)
+    freq_table = _dropmin(unigrams, mincount)
     vocab_hash = Dict{String, Int}()
     for (i,j) in enumerate(freq_table)
         (k,l) = j
@@ -51,9 +49,9 @@ function _dicts(ngd::Dict, mincount::Int)
     return freq_table, vocab_hash
 end
 
-function _dropmin(ngd, mincount)
+function _dropmin(unigrams, mincount)
     freq_table = Dict{String, Int}()
-    for (i, j) in ngd
+    for (i, j) in unigrams
         if j ≥ mincount
             freq_table[i] = j
         else
