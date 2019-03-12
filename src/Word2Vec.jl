@@ -5,12 +5,12 @@ using Reexport
 # using DataStructures
 # using LinearAlgebra
 
-include("huffman/Huffman.jl")
+include("inputprocessing.jl")
 
+include("huffman/Huffman.jl")
 @reexport using .Huffman
 
-#
-# include("inputprocessing.jl")
+
 #
 #
 # include("wordvectors.jl")

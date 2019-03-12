@@ -1,4 +1,4 @@
-@testset "huffman tree and path functions" begin
+@testset "HuffmanTree and allpaths function" begin
 
     using DataStructures
 
@@ -18,32 +18,16 @@
     pq = PriorityQueue(Dict(zip(words, freqs)))
     ht = HuffmanTree(pq, vocab_hash)
 
-    ary = Array{Tuple{Array{Int64,1},Array{Int64,1}},1}()
-    for word in words
-        push!(ary, normalizedpath(ht, vocab_hash, word))
-    end
+    test_nodes, test_branches = allpaths(ht, vocab_hash)
 
-    ary1 = Array{Tuple{Array{Int64,1},Array{Int64,1}},1}()
-    for word in words
-        push!(ary1, rootpath(ht, vocab_hash, word))
-    end
+    true_nodes = [[7], [6, 7], [5, 6, 7], [4, 5, 6, 7], [3, 4, 5, 6, 7],
+                  [2, 3, 4, 5, 6, 7], [1, 2, 3, 4, 5, 6, 7],
+                  [1, 2, 3, 4, 5, 6, 7]]
 
-    rootpaths = [([15], [0]),
-            ([14, 15], [0, 1]),
-            ([13, 14, 15], [0, 1, 1]),
-            ([12, 13, 14, 15], [0, 1, 1, 1]),
-            ([11, 12, 13, 14, 15], [0, 1, 1, 1, 1]),
-            ([10, 11, 12, 13, 14, 15], [0, 1, 1, 1, 1, 1]),
-            ([9, 10, 11, 12, 13, 14, 15], [0, 1, 1, 1, 1, 1, 1]),
-            ([9, 10, 11, 12, 13, 14, 15], [1, 1, 1, 1, 1, 1, 1])]
+    true_branches = [[0], [0, 1], [0, 1, 1], [0, 1, 1, 1], [0, 1, 1, 1, 1],
+                     [0, 1, 1, 1, 1, 1], [0, 1, 1, 1, 1, 1, 1],
+                     [1, 1, 1, 1, 1, 1, 1]]
 
-   @test ary1 == rootpaths
-
-   normpaths = Array{Tuple{Array{Int64,1},Array{Int64,1}},1}()
-   for i in 1:length(rootpaths)
-       a, b = rootpaths[i]
-       push!(normpaths, (a .- 8, b))
-   end
-
-   @test ary == normpaths
+   @test test_nodes == true_nodes
+   @test test_branches == true_branches
 end

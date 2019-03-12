@@ -1,17 +1,13 @@
 using DataStructures
 
-@testset "document processing" begin
+@testset "input processing" begin
 
-    pq, vocab_hash = _makedicts(docpath, 10)
-    @test typeof(pq) == PriorityQueue{String,Int64,Base.Order.ForwardOrdering}
-    @test typeof(vocab_hash) == Dict{String, Int}
+    sentences = [["hi", "tests"], ["tests", "are", "fun"]]
+    true_unigrams = Dict("tests" => 2, "hi" => 1, "are" => 1, "fun" => 1)
 
-    pq, vocab_hash = _makedicts(doc, 10)
-    @test typeof(pq) == PriorityQueue{String,Int64,Base.Order.ForwardOrdering}
-    @test typeof(vocab_hash) == Dict{String, Int}
+    pq, vocab_hash, contexts, unigrams = _process_input(sentences, 1, 2)
 
-    pq, vocab_hash = _makedicts(crps, 10)
-    @test typeof(pq) == PriorityQueue{String,Int64,Base.Order.ForwardOrdering}
-    @test typeof(vocab_hash) == Dict{String, Int}
+    @test typeof(pq) == PriorityQueue
+    @test unigrams == true_unigrams
 
 end
