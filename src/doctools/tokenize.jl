@@ -6,7 +6,7 @@ using WordTokenizers
 Helper function to prepare a text file for Word2Vec.  Takes in a filesystem path
 as a String and returns an Array of tokenized sentences.
 """
-function tokenize_document(path::String)
+function tokenize_document(path::T) where T<: AbstractString
     tokenized = open(path) do file
         text = replace(read(file, String), r"\n+|\r+|\s+" => " ")
         sentences = tokenize.(split_sentences(text))
