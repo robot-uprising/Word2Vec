@@ -1,6 +1,21 @@
-1. tests for huffman and inputprocessing
+should nodepaths returned from allpaths be unique?  no there is one set of nodes
+that is the same, the longest, and is only differentiated by the last branch
+choice
 
+so iterate across all contexts:
+  how to tell when they are done?
+  randomly cycle through them all
+    make a set
+    randomly choose one, if empty remove, if not, train
 
+struct for data
+  set of available stuff
+  context states
+  contexts
+
+  iterate method randomly chooses an element from the set, if it returns nothing, remove it
+
+to get a value inside an even context Int(floor(length(context)/2))
 
 other ideas:
 String = filename

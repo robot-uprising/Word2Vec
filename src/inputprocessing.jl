@@ -3,15 +3,21 @@ using DataStructures
 
 stateful = Iterators.Stateful
 
-#sentences is an array of sentences to be parsed
-#preprocessing should provide this array from the document
-function _process_input(sentences::Array{Array{T, 1}, 1}, mincount::Integer, window::Integer) where T <: AbstractString
-    unigrams = _unigrams(sentences)
-    freq_table, vocab_hash = _dicts(unigrams, mincount)
-    pq = PriorityQueue(freq_table)
-    # function to remove dropped words - add vocab hash to context function
+"""
+    process_input(sentences, mincount, window)
+
+Preprocessing function for input to be used in Word2Vec model.  Takes in an array of
+tokenized sentences, an integer for the minimum word frequency, and the context
+window size (one sided).
+
+Returns a frequency table to use in downsampling, a vocabulary hash, a vocabulary
+array, a PriorityQueue for constructing a HuffmanTree, and the contexts for Word2Vec
+training.
+"""
+function process_input(sentences::Array{Array{T, 1}, 1}, mincount::Integer, window::Integer) where T <: AbstractString
+    pq, freq_table, vocab_hash, vocab = _dicts(_unigrams(sentences), mincount)
     contexts = _contexts(sentences, window)
-    return pq, vocab_hash, contexts, unigrams
+    return freq_table, vocab_hash, vocab, pq, contexts
 end
 
 function _unigrams(sentences::Array{Array{T, 1}, 1}) where T <: AbstractString
@@ -24,42 +30,50 @@ function _unigrams(sentences::Array{Array{T, 1}, 1}) where T <: AbstractString
     unigrams
 end
 
-# takes in array of sentences, returns an IterTools.Partition for each sentence
-# in the doc
+# creates PriorityQueue for HuffmanTree, as well as a frequency table for downsampling
+# a vocabulary hash dict, and vocabulary array
+function _dicts(unigrams::Dict, mincount::Integer)
+    vocab_hash = Dict{String, Int}()
+    vocab = Array{String, 1}()
+    count_table = _dropmin(unigrams, mincount)
+    for (i,j) in enumerate(count_table)
+        (k,l) = j
+        vocab_hash[k] = i
+        push!(vocab, k)
+    end
+    pq = PriorityQueue(count_table)
+    maxcount = maximum(values(count_table))
+    freq_table = Dict(key=>value/maxcount for (key, value) in count_table)
+    return pq, freq_table, vocab_hash, vocab
+end
+
+# drop out unigrams that don't meet the minimum count threshold and return a
+# count table
+function _dropmin(unigrams, mincount)
+    count_table = Dict{String, Int}()
+    for (i, j) in unigrams
+        if j ≥ mincount
+            count_table[i] = j
+        else
+            continue
+        end
+    end
+    return count_table
+end
+
+# takes in array of sentences, returns a sateteful IterTools.Partition for each
+# tokenized sentence in the doc
 function _contexts(sentences::Array{Array{T, 1}, 1}, window::Integer) where T <: AbstractString
     size = window*2+1
-    contexts = []
+    contexts = Array{IterTools.Partition, 1}()
     for sentence in sentences
         if isempty(sentence)
             continue
         else
             length(sentence) ≥ size ? context = stateful(partition(sentence, size, 1)) :
                             context = stateful(partition(sentence, length(sentence), 1))
-            contexts = vcat(contexts, collect(context))
+            contexts = vcat(contexts, context)
         end
     end
     return contexts
-end
-
-# creates PriorityQueue for HuffmanTree, as well as vocabulary hash dict, and drop words array
-function _dicts(unigrams::Dict, mincount::Integer)
-    freq_table = _dropmin(unigrams, mincount)
-    vocab_hash = Dict{String, Int}()
-    for (i,j) in enumerate(freq_table)
-        (k,l) = j
-        vocab_hash[k] = i
-    end
-    return freq_table, vocab_hash
-end
-
-function _dropmin(unigrams, mincount)
-    freq_table = Dict{String, Int}()
-    for (i, j) in unigrams
-        if j ≥ mincount
-            freq_table[i] = j
-        else
-            continue
-        end
-    end
-    return freq_table
 end

@@ -1,5 +1,12 @@
-# generate the path from leaf to root, normalized to the number of leaves
-function _normalizedpath(ht, vocab_hash, in_word)
+"""
+    normalizedpath(ht, vocab_hash, in_word)
+
+Generate the path through a Huffman encoding for in_word.  Returns nodepath
+(the series of nodes from the root of the Huffman tree
+to the word leaf), and branchpath (the binary representation of whether to
+branch left or right from the node).
+"""
+function normalizedpath(ht::HuffmanTree, vocab_hash::Dict, in_word::String)
     nodepath, branchpath = _rootpath(ht, vocab_hash, in_word)
     nodepath = nodepath .- length(vocab_hash)
     return nodepath, branchpath
@@ -23,19 +30,18 @@ function _rootpath(ht::HuffmanTree, vocab_hash::Dict, in_word::String)
 end
 
 """
-    allpahts(ht, vocab_hash)
+    allpaths(ht, vocab_hash, vocab)
 
 Generate all paths through a Huffman encoding for every word in a vocabulary
-hash.  Returns nodepaths (the series of nodes from the root of the Huffman tree
-to the word leaf), and branchpaths (the binary representation of whether to
-branch left or right from the node).
+hash, by using a vocabulary array.  Returns nodepaths (the series of nodes
+from the root of the Huffman tree to the word leaf), and branchpaths (the binary
+representation of whether to branch left or right from the node).
 """
-function allpaths(ht::HuffmanTree, vocab_hash::Dict)
+function allpaths(ht::HuffmanTree, vocab_hash::Dict, vocab::Array)
     nodepaths = Array{Array{Int, 1}, 1}()
     branchpaths = Array{Array{Int, 1}, 1}()
     for key in 1:length(vocab_hash)
-        id2word = Dict([vocab_hash[word] => word for word in keys(vocab_hash)])
-        wordnodes, wordbranches = _normalizedpath(ht, vocab_hash, id2word[key])
+        wordnodes, wordbranches = normalizedpath(ht, vocab_hash, vocab[key])
         push!(nodepaths, wordnodes)
         push!(branchpaths, wordbranches)
     end

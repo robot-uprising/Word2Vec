@@ -5,11 +5,14 @@ using Reexport
 # using DataStructures
 # using LinearAlgebra
 
+include("./doctools/tokenize.jl")
+export tokenize_document
+
 include("inputprocessing.jl")
+export process_input
 
 include("huffman/Huffman.jl")
 @reexport using .Huffman
-
 
 #
 #
@@ -19,7 +22,7 @@ include("huffman/Huffman.jl")
 #     WordVectors,
 #
 #     # functions
-#     wordvectors
+#     wordvector
 #
 # include("network.jl")
 # export

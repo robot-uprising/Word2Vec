@@ -15,10 +15,11 @@
 
     freqs = [128,64,32,16,8,4,2,1]
 
+
     pq = PriorityQueue(Dict(zip(words, freqs)))
     ht = HuffmanTree(pq, vocab_hash)
 
-    test_nodes, test_branches = allpaths(ht, vocab_hash)
+    test_nodes, test_branches = allpaths(ht, vocab_hash, words)
 
     true_nodes = [[7], [6, 7], [5, 6, 7], [4, 5, 6, 7], [3, 4, 5, 6, 7],
                   [2, 3, 4, 5, 6, 7], [1, 2, 3, 4, 5, 6, 7],
