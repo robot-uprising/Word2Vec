@@ -14,6 +14,8 @@ export process_input
 include("huffman/Huffman.jl")
 @reexport using .Huffman
 
+include("contextdata/ContextDataTypes.jl")
+@reexport using .ContextDataTypes
 #
 #
 # include("wordvectors.jl")
