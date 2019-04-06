@@ -1,7 +1,4 @@
-using IterTools
 using DataStructures
-
-stateful = Iterators.Stateful
 
 """
     process_input(sentences, mincount, window)
@@ -11,13 +8,13 @@ tokenized sentences, an integer for the minimum word frequency, and the context
 window size (one sided).
 
 Returns a frequency table to use in downsampling, a vocabulary hash, a vocabulary
-array, a PriorityQueue for constructing a HuffmanTree, and the contexts for Word2Vec
+array, a PriorityQueue for constructing a HuffmanTree, and the data for Word2Vec
 training.
 """
-function process_input(sentences::Array{Array{T, 1}, 1}, mincount::Integer, window::Integer) where T <: AbstractString
+function process_input(sentences::Array{Array{T, 1}, 1}, mincount::Integer, window::Integer, model::Symbol) where T <: AbstractString
     pq, freq_table, vocab_hash, vocab = _dicts(_unigrams(sentences), mincount)
-    contexts = _contexts(sentences, window)
-    return freq_table, vocab_hash, vocab, pq, contexts
+    data = _data(sentences, window, vocab_hash, model)
+    return (freq_table = freq_table, vocab_hash = vocab_hash, vocab = vocab, pq = pq, data = data)
 end
 
 function _unigrams(sentences::Array{Array{T, 1}, 1}) where T <: AbstractString
@@ -63,17 +60,29 @@ end
 
 # takes in array of sentences, returns a sateteful IterTools.Partition for each
 # tokenized sentence in the doc
-function _contexts(sentences::Array{Array{T, 1}, 1}, window::Integer) where T <: AbstractString
+function _data(sentences::Array{Array{T, 1}, 1}, window::Integer, vocab_hash::Dict, model::Symbol) where T <: AbstractString
     size = window*2+1
-    contexts = Array{IterTools.Partition, 1}()
+    if size < 1 println(size) end
+    data = word2vecdata(model)
     for sentence in sentences
         if isempty(sentence)
             continue
         else
-            length(sentence) ≥ size ? context = stateful(partition(sentence, size, 1)) :
-                            context = stateful(partition(sentence, length(sentence), 1))
-            contexts = vcat(contexts, context)
+            dropmin_sentence = String[]
+            for word in sentence
+                if in(word, keys(vocab_hash))
+                    push!(dropmin_sentence, word)
+                else
+                    continue
+                end
+            end
+            if isempty(dropmin_sentence)
+                continue
+            else
+                length(dropmin_sentence) ≥ size ? push!(data, Context(size, dropmin_sentence)) :
+                            push!(data, Context(length(dropmin_sentence), dropmin_sentence))
+            end
         end
     end
-    return contexts
+    return data
 end
