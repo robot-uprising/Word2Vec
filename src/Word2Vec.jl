@@ -16,7 +16,9 @@ include("huffman/Huffman.jl")
 
 include("contextdata/ContextDataTypes.jl")
 @reexport using .ContextDataTypes
-#
+
+include("heirarchical_softmax.jl")
+export HeirarchicalSoftmax
 #
 # include("wordvectors.jl")
 # export
