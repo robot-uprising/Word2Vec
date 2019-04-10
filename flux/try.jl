@@ -37,9 +37,11 @@ h = param(randn(200)/3)
 nodes = [200,300,400,500]
 branches = [0,0,1,0]
 
-for i in 1:30
-    println(loss1(ov, h, nodes, branches))
-    grad1 = Tracker.gradient(()->loss1(ov, h, nodes, branches), Params([ov]))
+for i in 1:100
+    # println(loss1(ov, h, nodes, branches))
+    grad1 = Tracker.gradient(()->loss1(ov, h, nodes, branches), Params([ov, h]))
     a = grad1[ov]
+    b = grad1[h]
     update!(ov, -0.1*a)
+    update!(h, -0.1*b)
 end
