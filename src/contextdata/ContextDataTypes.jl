@@ -1,19 +1,22 @@
 module ContextDataTypes
 
+abstract type TextData end
+
 include("context_iterator.jl")
 include("cbowdata.jl")
 include("skipgramdata.jl")
+include("wrappers.jl")
 
-function word2vecdata(model::Symbol)
+function word2vecdata(vector_size::Integer, freq_table::Dict, model::Symbol)
     if model == :cbow
-        return CBOWData()
+        return CBOWData(vector_size, freq_table)
     elseif model == :skipgram
-        return SkipGramData()
+        return SkipGramData(vector_size, freq_table)
     else
         error("model of type $model not supported")
     end
 end
 
-export Context, CBOWData, SkipGramData, word2vecdata
+export Context, TextData, CBOWData, SkipGramData, word2vecdata
 
 end

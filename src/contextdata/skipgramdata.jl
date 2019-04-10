@@ -1,22 +1,27 @@
+using SparseArrays
+
 import Random: shuffle!
 
-struct SkipGramData
-    ordering::Array{Tuple}
-    xs::Array{Context}
+struct SkipGramData{A<:AbstractArray{<:Tuple{<:Integer, <:Integer, <:Integer}, 1}, B<:AbstractArray{<:Context{<:Integer, <:AbstractArray{<:Integer,1}}, 1}, C<:Integer, D<:AbstractDict{<:Integer, <:AbstractFloat}} <: TextData
+    ordering::A # to implement with iteration interface
+    xs::B # the contexts and words to iterate over
+    n::C # the size of the vocabulary
+    freq_table::D
 end
-
-SkipGramData() = SkipGramData([],[])
 
 function Base.push!(data::SkipGramData, c::Context)
     push!(data.xs, c)
     position = length(data.xs)
-    num_contexts = length(c.xs) + 1 - c.n
+    num_contexts = length(c.xs)
     for i in 1:num_contexts
-        for j in 1:c.n-1
+        words = length(iterate(c, i)[1][2])
+        for j in 1:words
             push!(data.ordering, (position, i, j))
         end
     end
 end
+
+SkipGramData(n::Int, freq_table::Dict) = SkipGramData(Tuple{Int, Int, Int}[],Context{Int, Array{Int,1}}[],n, freq_table)
 
 function shuffle!(data::SkipGramData)
     shuffle!(data.ordering)
@@ -35,10 +40,8 @@ function Base.iterate(data::SkipGramData, state = 1)
     else
         (contextid, context_state, word_id) = data.ordering[state]
         (context, _) = iterate(data.xs[contextid], context_state)
-        isodd(length(context)) ? wordloc = Int(ceil(length(context)/2)) :
-                                wordloc = Int(floor(length(context)/2))
-        word = context[wordloc]
-        window = vcat(context[1:wordloc-1], context[wordloc+1:end])
-        return ((word, window[word_id]), state + 1)
+        x = SparseVector(data.n, Int[context[1]], [1])
+        y = SparseVector(data.n, [iterate(context[2], word_id)[1]], [1])
+        return ((x, y), state + 1)
     end
 end

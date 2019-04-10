@@ -1,66 +1,39 @@
 import Random: shuffle!
 
-struct Context
-    n::Int
-    xs::Array
+struct Context{I<:Integer, J<:AbstractArray{<:Integer,1}}
+    n::I
+    xs::J
 
     function Context(n, xs)
         n > 0 || error("context window must be a positive integer - window size $n provided")
-        n ≤ length(xs) || error("context window must be less than context size")
-        return new(n, xs)
+        length(xs) > 1 || error("cannot iterate over an x of 1 or less")
+        return new{typeof(n), typeof(xs)}(n, xs)
     end
 end
 
-function Base.iterate(c::Context, state = 1)
-    offset = state + c.n -1
-    if state < 1 || offset > length(c.xs) + 1
+function Base.iterate(c::Context{I}, state = 1) where I<:Integer
+    if state < 1 || state > length(c.xs) + 1
         error("Invalid iterator state parameter")
-    elseif offset == length(c.xs) + 1
+    elseif state == length(c.xs) + 1
         return nothing
     else
-        v = view(c.xs, state:offset)
-        return (v, state + 1)
+
+        if state ≤ c.n
+            state == 1 ? lv = I[] : lv = view(c.xs, 1:state-1)
+        else
+            lv = view(c.xs, state-c.n:state-1)
+        end
+        if state ≥ length(c.xs) - c.n + 1
+            state == length(c.xs) ? uv = I[] : uv = view(c.xs, state+1:length(c.xs))
+        else
+            uv = view(c.xs, state+1:state+c.n)
+        end
+        word = c.xs[state]
+        v = vcat(lv, uv)
+        return ((word, v), state + 1)
     end
 end
 
 function Base.length(c::Context)
-    return length(c.xs) + 1 - c.n
+    return length(c.xs)
 end
-
-
-# struct ContextData
-#     ordering::Array{Tuple}
-#     xs::Array{Context}
-# end
-#
-# ContextData() = ContextData([],[])
-#
-# function Base.push!(cd::ContextData, c::Context)
-#     push!(cd.xs, c)
-#     position = length(cd.xs)
-#     num_contexts = length(c.xs) + 1 - c.n
-#     for i in 1:num_contexts
-#         push!(cd.ordering, (position, i))
-#     end
-# end
-#
-# function shuffle!(cd::ContextData)
-#     shuffle!(cd.ordering)
-#     return nothing
-# end
-#
-# function Base.length(cd::ContextData)
-#     return length(cd.ordering)
-# end
-#
-# function Base.iterate(cd::ContextData, state = 1)
-#     if state < 1 || state > length(cd) + 1
-#         error("Invalid iterator state parameter")
-#     elseif state == length(cd.ordering) + 1
-#         return nothing
-#     else
-#         (contextid, context_state) = cd.ordering[state]
-#         (context, _) = iterate(cd.xs[contextid], context_state)
-#         return (context, state + 1)
-#     end
-# end

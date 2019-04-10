@@ -1,20 +1,24 @@
+using SparseArrays
+
 import Random: shuffle!
 
-struct CBOWData
-    ordering::Array{Tuple}
-    xs::Array{Context}
+struct CBOWData{A<:AbstractArray{<:Tuple{<:Integer, <:Integer}, 1}, B<:AbstractArray{<:Context{<:Integer, <:AbstractArray{<:Integer,1}}, 1}, C<:Integer,  D<:AbstractDict{<:Integer, <:AbstractFloat}} <: TextData
+    ordering::A # to implement with iteration interface
+    xs::B # the contexts and words to iterate over
+    n::C # the size of the vocabulary
+    freq_table::D
 end
-
-CBOWData() = CBOWData([],[])
 
 function Base.push!(data::CBOWData, c::Context)
     push!(data.xs, c)
     position = length(data.xs)
-    num_contexts = length(c.xs) + 1 - c.n
+    num_contexts = length(c.xs)
     for i in 1:num_contexts
         push!(data.ordering, (position, i))
     end
 end
+
+CBOWData(n::Int, freq_table::Dict) = CBOWData(Tuple{Int, Int}[],Context{Int, Array{Int,1}}[],n, freq_table)
 
 function shuffle!(data::CBOWData)
     shuffle!(data.ordering)
@@ -33,10 +37,8 @@ function Base.iterate(data::CBOWData, state = 1)
     else
         (contextid, context_state) = data.ordering[state]
         (context, _) = iterate(data.xs[contextid], context_state)
-        isodd(length(context)) ? wordloc = Int(ceil(length(context)/2)) :
-                                wordloc = Int(floor(length(context)/2))
-        word = context[wordloc]
-        window = vcat(context[1:wordloc-1], context[wordloc+1:end])
-        return ((window, word), state + 1)
+        y = SparseVector(data.n, Int[context[1]], [1])
+        x = SparseVector(data.n, context[2], ones(length(context[2]))/length(context[2]))
+        return ((x,y), state + 1)
     end
 end
