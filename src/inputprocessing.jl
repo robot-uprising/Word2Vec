@@ -13,8 +13,8 @@ training.
 """
 function process_input(sentences::Array{Array{T, 1}, 1}, mincount::Integer, window::Integer, model::Symbol) where T <: AbstractString
     pq, freq_table, vocab_hash, vocab = _dicts(_unigrams(sentences), mincount)
-    data = _data(sentences, window, vocab_hash, model)
-    return (freq_table = freq_table, vocab_hash = vocab_hash, vocab = vocab, pq = pq, data = data)
+    data = _data(sentences, window, vocab_hash, freq_table, model)
+    return (vocab_hash = vocab_hash, vocab = vocab, pq = pq, data = data)
 end
 
 function _unigrams(sentences::Array{Array{T, 1}, 1}) where T <: AbstractString
@@ -40,7 +40,7 @@ function _dicts(unigrams::Dict, mincount::Integer)
     end
     pq = PriorityQueue(count_table)
     maxcount = maximum(values(count_table))
-    freq_table = Dict(key=>value/maxcount for (key, value) in count_table)
+    freq_table = Dict(vocab_hash[key]=>value/maxcount for (key, value) in count_table)
     return pq, freq_table, vocab_hash, vocab
 end
 
@@ -60,23 +60,23 @@ end
 
 # takes in array of sentences, returns a sateteful IterTools.Partition for each
 # tokenized sentence in the doc
-function _data(sentences::Array{Array{T, 1}, 1}, window::Integer, vocab_hash::Dict, model::Symbol) where T <: AbstractString
+function _data(sentences::Array{Array{T, 1}, 1}, window::Integer, vocab_hash::Dict, freq_table::Dict, model::Symbol) where T <: AbstractString
     size = window*2+1
     if size < 1 println(size) end
-    data = word2vecdata(model)
+    data = word2vecdata(length(keys(vocab_hash)),freq_table,  model)
     for sentence in sentences
         if isempty(sentence)
             continue
         else
-            dropmin_sentence = String[]
+            dropmin_sentence = Int[]
             for word in sentence
                 if in(word, keys(vocab_hash))
-                    push!(dropmin_sentence, word)
+                    push!(dropmin_sentence, vocab_hash[word])
                 else
                     continue
                 end
             end
-            if isempty(dropmin_sentence)
+            if isempty(dropmin_sentence) || length(dropmin_sentence) == 1
                 continue
             else
                 length(dropmin_sentence) ≥ size ? push!(data, Context(size, dropmin_sentence)) :
