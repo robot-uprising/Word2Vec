@@ -1,5 +1,3 @@
-using Flux: param
-
 struct WordVectors{A<:AbstractArray{<:AbstractFloat, 2}, B<:AbstractArray{<:AbstractString, 1}, C<:AbstractDict{<:AbstractString, <:Integer}}
     vectors::A # the vectors computed from word2vec
     vocab::B # id to vocab
@@ -7,17 +5,8 @@ struct WordVectors{A<:AbstractArray{<:AbstractFloat, 2}, B<:AbstractArray{<:Abst
 end
 
 function WordVectors(wordvector_dims::Integer, vocab::AbstractArray, vocab_hash)
-    return WordVectors(param(randn(wordvector_dims, length(vocab))), vocab, vocab_hash)
+    return WordVectors(randn(wordvector_dims, length(vocab)), vocab, vocab_hash)
 end
-
-(layer::WordVectors)(x::Integer, y::Integer) = layer.vectors[x, :], y
-
-(layer::WordVectors)(x::AbstractArray{<:Real, 1}, y::Integer) = layer.vectors*x, y
-
-(layer::WordVectors)(x::AbstractArray{<:Real, 2}, y::AbstractArray{<:Real, 1}) = layer.vectors*x, y
-
-(layer::WordVectors)(data::Tuple) = layer(data...)
-
 
 import Base: show, size
 
