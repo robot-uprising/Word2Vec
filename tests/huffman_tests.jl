@@ -1,40 +1,34 @@
-@testset "huffman tree" begin
+@testset "HuffmanTree and allpaths function" begin
 
-    ht, vocab_hash = HuffmanTree(docpath, 10)
-    @test typeof(ht) == HuffmanTree{Int}
-    @test typeof(vocab_hash) == Dict{String, Int}
-    @test length(ht.nodeparent) == 2*length(vocab_hash)-1
+    using DataStructures
 
-    ht, vocab_hash = HuffmanTree(doc, 10)
-    @test length(ht.nodeparent) == 2*length(vocab_hash)-1
+    vocab_hash = Dict("this" => 1,
+                "is" => 2,
+                "the" => 3,
+                "most" => 4,
+                "WICKED" => 5,
+                "AWESOME" =>6,
+                "test" => 7,
+                "evar!" => 8)
 
-    ht, vocab_hash = HuffmanTree(crps, 10)
-    @test length(ht.nodeparent) == 2*length(vocab_hash)-1
+    words = ["this", "is", "the", "most", "WICKED", "AWESOME", "test", "evar!"]
 
-    ary = Array{Array{Int64,1},1}()
-    for i in keys(vocab_hash)
-        nodepath, branchpath = rootpath(ht, vocab_hash, i)
-        push!(ary, branchpath)
-    end
-    @test allunique(ary)
+    freqs = [128,64,32,16,8,4,2,1]
 
-    key = ["this", "is", "the", "most", "WICKED", "AWESOME", "test", "evar!"]
-    prior = [128,64,32,16,8,4,2,1]
 
-    pq, vocab_hash = _dicts(Dict(zip(key, prior)), 0)
-    ht = HuffmanTree(_binarytree(pq, vocab_hash)...)
-    ary1 = Array{Tuple{Array{Int64,1},Array{Int64,1}},1}()
-    for i in key
-        push!(ary1, rootpath(ht, vocab_hash, i))
-    end
-    paths = [([15], [0]),
-            ([14, 15], [0, 1]),
-            ([13, 14, 15], [0, 1, 1]),
-            ([12, 13, 14, 15], [0, 1, 1, 1]),
-            ([11, 12, 13, 14, 15], [0, 1, 1, 1, 1]),
-            ([10, 11, 12, 13, 14, 15], [0, 1, 1, 1, 1, 1]),
-            ([9, 10, 11, 12, 13, 14, 15], [0, 1, 1, 1, 1, 1, 1]),
-            ([9, 10, 11, 12, 13, 14, 15], [1, 1, 1, 1, 1, 1, 1])]
-    @test ary1 == paths
+    pq = PriorityQueue(Dict(zip(words, freqs)))
+    ht = HuffmanTree(pq, vocab_hash)
 
+    test_nodes, test_branches = allpaths(ht, vocab_hash, words)
+
+    true_nodes = [[7], [6, 7], [5, 6, 7], [4, 5, 6, 7], [3, 4, 5, 6, 7],
+                  [2, 3, 4, 5, 6, 7], [1, 2, 3, 4, 5, 6, 7],
+                  [1, 2, 3, 4, 5, 6, 7]]
+
+    true_branches = [[0], [0, 1], [0, 1, 1], [0, 1, 1, 1], [0, 1, 1, 1, 1],
+                     [0, 1, 1, 1, 1, 1], [0, 1, 1, 1, 1, 1, 1],
+                     [1, 1, 1, 1, 1, 1, 1]]
+
+   @test test_nodes == true_nodes
+   @test test_branches == true_branches
 end
