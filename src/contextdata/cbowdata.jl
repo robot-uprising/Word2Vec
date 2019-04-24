@@ -37,7 +37,7 @@ function Base.iterate(data::CBOWData, state = 1)
     else
         (contextid, context_state) = data.ordering[state]
         (context, _) = iterate(data.xs[contextid], context_state)
-        y = SparseVector(data.n, Int[context[1]], [1])
+        y = context[1]
         x = SparseVector(data.n, context[2], ones(length(context[2]))/length(context[2]))
         return ((x,y), state + 1)
     end

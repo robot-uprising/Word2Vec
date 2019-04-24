@@ -41,7 +41,7 @@ function Base.iterate(data::SkipGramData, state = 1)
         (contextid, context_state, word_id) = data.ordering[state]
         (context, _) = iterate(data.xs[contextid], context_state)
         x = SparseVector(data.n, Int[context[1]], [1])
-        y = SparseVector(data.n, [iterate(context[2], word_id)[1]], [1])
+        y = iterate(context[2], word_id)[1]
         return ((x, y), state + 1)
     end
 end

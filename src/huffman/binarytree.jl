@@ -1,5 +1,11 @@
 using DataStructures
 
+"""
+HuffmanTree{M<:Integer, N<:Integer}
+    A Huffman encoding of words comprising an array of nodes parents, and an
+    array of branching direction for each node.  Array location corresponds to
+    the hash value of corresponding word.
+"""
 struct HuffmanTree{M<:Integer, N<:Integer}
     nodeparent::AbstractArray{M}
     branch::AbstractArray{N}

@@ -14,7 +14,7 @@ training.
 function process_input(sentences::Array{Array{T, 1}, 1}, mincount::Integer, window::Integer, model::Symbol) where T <: AbstractString
     pq, freq_table, vocab_hash, vocab = _dicts(_unigrams(sentences), mincount)
     data = _data(sentences, window, vocab_hash, freq_table, model)
-    return (vocab_hash = vocab_hash, vocab = vocab, pq = pq, data = data)
+    return vocab_hash, vocab, pq, data
 end
 
 function _unigrams(sentences::Array{Array{T, 1}, 1}) where T <: AbstractString
@@ -39,8 +39,8 @@ function _dicts(unigrams::Dict, mincount::Integer)
         push!(vocab, k)
     end
     pq = PriorityQueue(count_table)
-    maxcount = maximum(values(count_table))
-    freq_table = Dict(vocab_hash[key]=>value/maxcount for (key, value) in count_table)
+    vocab_size = sum(values(count_table))
+    freq_table = Dict(vocab_hash[key]=>value/vocab_size for (key, value) in count_table)
     return pq, freq_table, vocab_hash, vocab
 end
 
@@ -61,8 +61,6 @@ end
 # takes in array of sentences, returns a sateteful IterTools.Partition for each
 # tokenized sentence in the doc
 function _data(sentences::Array{Array{T, 1}, 1}, window::Integer, vocab_hash::Dict, freq_table::Dict, model::Symbol) where T <: AbstractString
-    size = window*2+1
-    if size < 1 println(size) end
     data = word2vecdata(length(keys(vocab_hash)),freq_table,  model)
     for sentence in sentences
         if isempty(sentence)
@@ -79,8 +77,7 @@ function _data(sentences::Array{Array{T, 1}, 1}, window::Integer, vocab_hash::Di
             if isempty(dropmin_sentence) || length(dropmin_sentence) == 1
                 continue
             else
-                length(dropmin_sentence) ≥ size ? push!(data, Context(size, dropmin_sentence)) :
-                            push!(data, Context(length(dropmin_sentence), dropmin_sentence))
+                push!(data, Context(window, dropmin_sentence))
             end
         end
     end

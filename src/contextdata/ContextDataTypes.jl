@@ -17,6 +17,7 @@ function word2vecdata(vector_size::Integer, freq_table::Dict, model::Symbol)
     end
 end
 
-export Context, TextData, CBOWData, SkipGramData, word2vecdata
+export Context, TextData, CBOWData, SkipGramData, word2vecdata,
+        DownsampledData, downsample, MiniBatchData, minibatch
 
 end
