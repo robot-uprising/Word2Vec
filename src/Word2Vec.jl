@@ -17,6 +17,12 @@ include("contextdata/ContextDataTypes.jl")
 include("heirarchical_softmax.jl")
 export HeirarchicalSoftmax
 
+include("interface.jl")
+export word2vec
+
+include("train.jl")
+export train
+
 include("wordvectors.jl")
 export
     # types
