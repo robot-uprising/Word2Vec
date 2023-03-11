@@ -5,8 +5,13 @@ struct HeirarchicalSoftmax{A<:AbstractArray{<:AbstractArray{<:Integer, 1}}}
     branchpaths::A
 end
 
+"""
+    init_softmax(pq::PriorityQueue, vocab_hash::Dict, vocab::Array)
+
+TBW
+"""
 function init_softmax(pq::PriorityQueue, vocab_hash::Dict, vocab::Array)
-    return HeirarchicalSoftmax(randn(length(keys(vocab_hash)), wordvector_dims), allpaths(HuffmanTree(pq, vocab_hash), vocab_hash, vocab)...)
+    return HeirarchicalSoftmax(allpaths(HuffmanTree(pq, vocab_hash), vocab_hash, vocab)...)
 end
 
 

@@ -14,12 +14,6 @@ include("huffman/Huffman.jl")
 include("contextdata/ContextDataTypes.jl")
 @reexport using .ContextDataTypes
 
-include("heirarchical_softmax.jl")
-export HeirarchicalSoftmax
-
-include("interface.jl")
-export init_vectors
-
 include("train.jl")
 export train
 
@@ -29,10 +23,14 @@ export
     WordVectors,
 
     # functions
-    wordvector
+    init_vectors,
     index, size,
     vocabulary, in_vocabulary,
     get_vector, cosine, cosine_similar_words,
     analogy, analogy_words, similarity
+
+
+include("interface.jl")
+    export init_model
 
 end
