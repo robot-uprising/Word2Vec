@@ -25,7 +25,7 @@ Base.length(data::MiniBatchData) = length(data.minidata)
 
 function Base.iterate(data::MiniBatchData, state = 1)
     temp = iterate(data.minidata, state)
-    if temp == nothing
+    if temp === nothing
         return nothing
     else
         (temp, newstate) = temp
