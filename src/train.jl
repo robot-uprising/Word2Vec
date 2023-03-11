@@ -1,5 +1,11 @@
-function train(model, data)
+function _train!(model, ::Val{:cbow})
     @show model
     @show data
-    println("not yet implemented")
+    println("cbow not yet implemented")
+end
+
+function _train!(model, ::Val{:skipgram})
+    @show model
+    @show data
+    println(" skipgram not yet implemented")
 end
