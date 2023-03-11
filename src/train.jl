@@ -7,5 +7,5 @@ end
 function _train!(model, ::Val{:skipgram})
     @show model
     @show data
-    println(" skipgram not yet implemented")
+    println("skipgram not yet implemented")
 end
