@@ -18,7 +18,7 @@ include("heirarchical_softmax.jl")
 export HeirarchicalSoftmax
 
 include("interface.jl")
-export word2vec
+export init_vectors
 
 include("train.jl")
 export train

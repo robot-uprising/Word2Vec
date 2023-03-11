@@ -1,5 +1,11 @@
+using Revise
 using Word2Vec
 
 sentences = tokenize_document("./data/shakespeare_all.txt")
 
-model, data = word2vec(300, sentences, 3, 3, :skipgram)
+model = init_model(100, sentences, 2, 5, :cbow)
+
+
+
+
+

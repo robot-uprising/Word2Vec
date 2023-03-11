@@ -4,7 +4,7 @@ struct WordVectors{A<:AbstractArray{<:AbstractFloat, 2}, B<:AbstractArray{<:Abst
     vocab_hash::C # vocabulary to id
 end
 
-function WordVectors(wordvector_dims::Integer, vocab::AbstractArray, vocab_hash)
+function init_vectors(wordvector_dims::Integer, vocab::AbstractArray, vocab_hash)
     return WordVectors(randn(wordvector_dims, length(vocab)), vocab, vocab_hash)
 end
 

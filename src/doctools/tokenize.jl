@@ -1,9 +1,9 @@
 using WordTokenizers
 
 """
-    tokenize_document(path)
+    tokenize_document(path::T) where T<: AbstractString
 
-Helper function to prepare a text file for Word2Vec.  Takes in a filesystem path
+    Helper function to prepare a text file for Word2Vec.  Takes in a filesystem path
 as a String and returns an Array of tokenized sentences.
 """
 function tokenize_document(path::T) where T<: AbstractString
@@ -19,7 +19,6 @@ function tokenize_document(path::T) where T<: AbstractString
             end
             push!(tokenized, lowercase.(no_punct))
         end
-        tokenized
     end
     return tokenized
 end

@@ -1,19 +1,19 @@
 using DataStructures
 
 """
-    process_input(sentences, mincount, window)
+   process_input(sentences, mincount, window)
 
 Preprocessing function for input to be used in Word2Vec model.  Takes in an array of
 tokenized sentences, an integer for the minimum word frequency, and the context
 window size (one sided).
 
-Returns a namedtuple containing a frequency table to use in downsampling, a vocabulary hash, a vocabulary
-array, a PriorityQueue for constructing a HuffmanTree, and the data for Word2Vec
-training.
+Returns a namedtuple containing a frequency table to use in downsampling, a vocabulary hash (for word to id), a vocabulary
+array (for id to word), a PriorityQueue for constructing a HuffmanTree, and a W2VData input data object for training.
 """
 function process_input(sentences::Array{Array{T, 1}, 1}, mincount::Integer, window::Integer) where T <: AbstractString
     pq, freq_table, vocab_hash, vocab = _dicts(_unigrams(sentences), mincount)
     data = _data(sentences, window, vocab_hash, freq_table)
+
     return (freq_table = freq_table, vocab_hash = vocab_hash, vocab = vocab, pq = pq, data = data)
 end
 
@@ -32,15 +32,14 @@ end
 # a vocabulary hash dictionary, and hashed vocabulary array
 function _dicts(unigrams::Dict, mincount::Integer)
     vocab_hash = Dict{String, Int}()
-    vocab = Array{Int, 1}()
+    vocab = Array{String, 1}()
     count_table = _dropmin(unigrams, mincount)
     for (i,j) in enumerate(count_table)
-        (k,l) = j
+        (k,_) = j
         vocab_hash[k] = i
-        push!(vocab, i)
+        push!(vocab, k)
     end
-    hashed_table = Dict(vocab_hash[key]=>value for (key, value) in count_table)
-    pq = PriorityQueue(hashed_table)
+    pq = PriorityQueue(count_table)
     vocab_size = sum(values(count_table))
     freq_table = Dict(vocab_hash[key]=>value/vocab_size for (key, value) in count_table)
     return pq, freq_table, vocab_hash, vocab

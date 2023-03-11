@@ -1,12 +1,11 @@
 using DataStructures: PriorityQueue
 
-struct HeirarchicalSoftmax{A<:AbstractArray{<:AbstractFloat, 2}, B<:AbstractArray{<:AbstractArray{<:Integer, 1}}}
-    tree_vectors::A
-    nodepaths::B
-    branchpaths::B
+struct HeirarchicalSoftmax{A<:AbstractArray{<:AbstractArray{<:Integer, 1}}}
+    nodepaths::A
+    branchpaths::A
 end
 
-function HeirarchicalSoftmax(wordvector_dims::Int, pq::PriorityQueue, vocab_hash::Dict, vocab::Array)
+function init_softmax(pq::PriorityQueue, vocab_hash::Dict, vocab::Array)
     return HeirarchicalSoftmax(randn(length(keys(vocab_hash)), wordvector_dims), allpaths(HuffmanTree(pq, vocab_hash), vocab_hash, vocab)...)
 end
 
