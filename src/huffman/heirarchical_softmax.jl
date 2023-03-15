@@ -1,8 +1,9 @@
 using DataStructures: PriorityQueue
 
-struct HeirarchicalSoftmax{A<:AbstractArray{<:AbstractArray{<:Integer, 1}}}
-    nodepaths::A
-    branchpaths::A
+struct HeirarchicalSoftmax{A<:AbstractArray{<:AbstractFloat, 2}, B<:AbstractArray{<:AbstractArray{<:Integer, 1}}}
+    weights::A
+    nodepaths::B
+    branchpaths::B
 end
 
 """
@@ -10,8 +11,8 @@ end
 
 TBW
 """
-function init_softmax(pq::PriorityQueue, vocab_hash::Dict, vocab::Array)
-    return HeirarchicalSoftmax(allpaths(HuffmanTree(pq, vocab_hash), vocab_hash, vocab)...)
+function init_softmax(vector_size::Int, pq::PriorityQueue, vocab_hash::Dict, vocab::Array)
+    return HeirarchicalSoftmax(randn(vector_size, length(vocab)), allpaths(HuffmanTree(pq, vocab_hash), vocab_hash, vocab)...)
 end
 
 
