@@ -15,7 +15,10 @@ include("contextdata/ContextDataTypes.jl")
 @reexport using .ContextDataTypes
 
 include("train.jl")
-export train
+export 
+    _train!
+    
+
 
 include("wordvectors.jl")
 export
