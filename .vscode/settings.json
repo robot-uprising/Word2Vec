@@ -1,6 +1,6 @@
 {
     "workbench.colorTheme": "Visual Studio Dark",
     "julia.executablePath": "/workspaces/julia/julia-1.8.5/bin/julia",
-    "julia.execution.codeInREPL": true,
+    "julia.execution.codeInREPL": false,
     "julia.NumThreads": "auto"
 }

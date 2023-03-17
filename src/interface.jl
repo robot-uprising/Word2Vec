@@ -1,10 +1,13 @@
 using Word2Vec
 
-struct Model
-    wv::WordVectors
-    hs::HeirarchicalSoftmax
-    data::TextData
-    type::Symbol
+struct Model{A<:WordVectors, 
+            B<:HeirarchicalSoftmax{<:AbstractArray{<:AbstractFloat, 2},<:AbstractArray{<:AbstractArray{<:Integer,1}}},
+            C<:W2VData,#{<:Array{Tuple{<:Int64, <:Int64},1}, },
+            D<:Symbol}
+    wv::A
+    hs::B
+    data::C
+    type::D
 end
 
 function word2vec()
