@@ -7,6 +7,6 @@ include("wrappers.jl")
 include("word2vecdata.jl")
 
 export TextData, Context, W2VData, word2vecdata,
-        DownsampledData, downsample, MiniBatchData, minibatch
+        DownsampledData, downsample, MiniBatchData, minibatch, shuffle!
 
 end

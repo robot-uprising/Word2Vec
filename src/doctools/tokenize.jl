@@ -14,7 +14,7 @@ function tokenize_document(path::T) where T<: AbstractString
     for sentence in sentences
         no_punct = String[]
         for word in sentence
-            occursin(r"[!\"#$%&\'()*+,-./:;<=>?@\[\\\]^_`\{\|\}~]+", word) ?
+            occursin(r"[’!\"#$%&\'()*+,-./:;<=>?@\[\\\]^_`\{\|\}~]+", word) ?
                                                 continue : push!(no_punct, word)
         end
         push!(tokenized, lowercase.(no_punct))

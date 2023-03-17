@@ -24,3 +24,5 @@ function Base.show(io::IO, hs::HeirarchicalSoftmax)
 end
 
 size(hs::HeirarchicalSoftmax) = size(hs.tree_vectors)
+
+get_weight(hs::HeirarchicalSoftmax, node::Int) = hs.weights[:, node]

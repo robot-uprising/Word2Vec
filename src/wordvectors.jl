@@ -51,10 +51,10 @@ index(wv::WordVectors, word) = wv.vocab_hash[word]
 
 Return the vector representation of `word` from the WordVectors `wv`.
 """
-get_vector(wv::WordVectors, word) =
-      (idx = wv.vocab_hash[word]; wv.vectors[:,idx])
+get_vector(wv::WordVectors, word::AbstractString) =
+      (idx = index(wv, word); wv.vectors[:,idx])
 
-
+get_vector(wv::WordVectors, index::Int) = wv.vectors[:, index]
 """
     cosine(wv, word, n=10)
 
