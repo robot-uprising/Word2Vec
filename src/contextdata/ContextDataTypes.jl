@@ -6,7 +6,7 @@ include("context_iterator.jl")
 include("wrappers.jl")
 include("word2vecdata.jl")
 
-export Context, W2VData, word2vecdata,
-        DownsampledData, downsample, MiniBatchData, minibatch
+export TextData, Context, W2VData, word2vecdata,
+        DownsampledData, downsample, MiniBatchData, minibatch, shuffle!
 
 end

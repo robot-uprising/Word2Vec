@@ -1,13 +1,18 @@
 using DataStructures: PriorityQueue
 
 struct HeirarchicalSoftmax{A<:AbstractArray{<:AbstractFloat, 2}, B<:AbstractArray{<:AbstractArray{<:Integer, 1}}}
-    tree_vectors::A
+    weights::A
     nodepaths::B
     branchpaths::B
 end
 
-function HeirarchicalSoftmax(wordvector_dims::Int, pq::PriorityQueue, vocab_hash::Dict, vocab::Array)
-    return HeirarchicalSoftmax(randn(length(keys(vocab_hash)), wordvector_dims), allpaths(HuffmanTree(pq, vocab_hash), vocab_hash, vocab)...)
+"""
+    init_softmax(pq::PriorityQueue, vocab_hash::Dict, vocab::Array)
+
+TBW
+"""
+function init_softmax(vector_size::Int, pq::PriorityQueue, vocab_hash::Dict, vocab::Array)
+    return HeirarchicalSoftmax(randn(vector_size, length(vocab)), allpaths(HuffmanTree(pq, vocab_hash), vocab_hash, vocab)...)
 end
 
 
@@ -19,3 +24,5 @@ function Base.show(io::IO, hs::HeirarchicalSoftmax)
 end
 
 size(hs::HeirarchicalSoftmax) = size(hs.tree_vectors)
+
+get_weight(hs::HeirarchicalSoftmax, node::Int) = hs.weights[:, node]

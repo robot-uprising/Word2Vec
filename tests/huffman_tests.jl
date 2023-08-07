@@ -1,4 +1,4 @@
-@testset "HuffmanTree and allpaths function" begin
+@testset "Test HuffmanTree and allpaths function" begin
 
     using DataStructures
 
@@ -29,6 +29,45 @@
                      [0, 1, 1, 1, 1, 1], [0, 1, 1, 1, 1, 1, 1],
                      [1, 1, 1, 1, 1, 1, 1]]
 
-   @test test_nodes == true_nodes
-   @test test_branches == true_branches
+    @test test_nodes == true_nodes
+    @test test_branches == true_branches
 end
+
+@testset "Generate HuffmanTree using tokenized document" begin
+    
+    sentences = tokenize_document("./tests/test_data.txt")
+    processed = process_input(sentences, 5, 5) #sentences was generated before in the tokenization tests
+    ht1 = HuffmanTree(processed.pq, processed.vocab_hash)
+    test_nodes1, test_branches1 = allpaths(ht1, processed.vocab_hash, processed.vocab)
+
+    true_nodes1 =   [[3, 6, 8, 9],
+                    [3, 6, 8, 9],
+                    [2, 6, 8, 9],
+                    [7, 9],
+                    [1, 5, 8, 9],
+                    [4, 7, 9],
+                    [4, 7, 9],
+                    [2, 6, 8, 9],
+                    [5, 8, 9],
+                    [1, 5, 8, 9]]
+
+    true_branches1 =    [[1, 0, 0, 0],
+                        [0, 0, 0, 0],
+                        [0, 1, 0, 0],
+                        [0, 1],
+                        [1, 1, 1, 0],
+                        [0, 1, 1],
+                        [1, 1, 1],
+                        [1, 1, 0, 0],
+                        [0, 1, 0],
+                        [0, 1, 1, 0]]
+     
+    @test test_nodes1 == true_nodes1
+    @test test_branches1 == true_branches1
+end
+
+sentences = tokenize_document("./tests/test_data.txt")
+processed = process_input(sentences, 5, 5) #sentences was generated before in the tokenization tests
+ht1 = HuffmanTree(processed.pq, processed.vocab_hash)
+test_nodes1, test_branches1 = allpaths(ht1, processed.vocab_hash, processed.vocab)
+

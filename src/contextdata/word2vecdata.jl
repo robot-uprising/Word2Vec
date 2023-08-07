@@ -38,3 +38,10 @@ function Base.iterate(data::W2VData, state = 1)
         return ((x,y), state + 1)
     end
 end
+
+function Base.show(io::IO, data::W2VData)
+    num_sentences = length(data.xs)
+    num_contexts = length(data)
+    println("Iterable Word2Vec data with $num_sentences sentences and $num_contexts word-context pairs")
+end
+
