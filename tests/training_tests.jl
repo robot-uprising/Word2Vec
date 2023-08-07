@@ -36,7 +36,5 @@ skipgram_model = init_model(tokenize_document(DATA), VECTOR_SIZE, WINDOW, MINCOU
     @test err == true_err
 end
 
-@testset
-
 
     
